@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Character Head Generator — Template</title>
+    <link href="../fonts.css" rel="stylesheet">
+    <!-- JSZip for bulk exporting -->
+    <script src="../vendor/jszip.3.10.1.min.js"></script>
+    <script>window.__i18nConfig = { localeDir: 'locales/' };</script>
+    <script src="../js/i18n.js"></script>
+<style>
+  :root {
+    --bg-color: #0d0d12;
+    --panel-bg: #16161c;
+    --panel-2: #1e1e26;
+    --text-color: #d1d1d6;
+    --text-dim: #9aa0a6;
+    --accent: #4a5c78;
+    --accent-alt: #3d8f5c;
+    --border: #2a2a35;
+    --iron: #333340;
+    --font-display: "Bangers", serif;
+    --font-body: "Nunito", system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0; height: 100vh; overflow: hidden;
+    font-family: var(--font-body);
+    background: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+  }
+
+  /* Landscape Layout Enforced */
+  .workspace { display: flex; flex-direction: row; width: 100%; height: 100%; }
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar {
+    width: 400px; min-width: 400px;
+    background: var(--panel-bg);
+    border-right: 1px solid var(--border);
+    padding: 22px 20px 18px;
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  .sidebar::-webkit-scrollbar { width: 8px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .brand {
+    font-family: var(--font-display);
+    font-size: 1.55rem; font-weight: 600; letter-spacing: .02em;
+    color: var(--text-color);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+    display: flex; align-items: baseline; justify-content: space-between;
+  }
+  .brand small { font-family: var(--font-body); font-size: .62rem; text-transform: uppercase; letter-spacing: .14em; color: var(--accent); font-weight: 600; }
+
+  h3.section-title {
+    font-family: var(--font-display);
+    font-size: 1.05rem; font-weight: 600; color: var(--accent);
+    margin: 0 0 10px; letter-spacing: .05em; text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px;
+  }
+  h3.section-title::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
+
+  .control-group { display: flex; flex-direction: column; gap: 12px; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+  .control-group:last-of-type { border-bottom: none; }
+
+  label.field { font-size: .78rem; color: var(--text-dim); display: flex; flex-direction: column; gap: 5px; }
+  label.field span.val { color: var(--accent); font-weight: 600; }
+  label.row { flex-direction: row; align-items: center; justify-content: space-between; }
+
+  select, input[type="range"] {
+    width: 100%; padding: 7px 8px;
+    background: var(--panel-2); color: var(--text-color);
+    border: 1px solid var(--border); border-radius: 4px;
+    font-family: var(--font-body); font-size: .82rem;
+  }
+  select:focus, input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  .color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; }
+  .color-field { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: .76rem; color: var(--text-dim); min-height: 28px; }
+  input[type="color"] {
+    width: 40px; height: 28px; padding: 0; border: 1px solid var(--border); border-radius: 4px;
+    background: none; cursor: pointer; flex-shrink: 0;
+  }
+  .checkbox-row { display: flex; align-items: center; gap: 8px; font-size: .78rem; color: var(--text-dim); margin-top: 2px; }
+  input[type="checkbox"] { accent-color: var(--accent); width: 15px; height: 15px; }
+
+  button {
+    font-family: var(--font-body); font-weight: 600; font-size: .8rem;
+    background: var(--accent); color: #fff;
+    border: 1px solid var(--accent); padding: 10px 12px; border-radius: 4px;
+    cursor: pointer; letter-spacing: .02em;
+    transition: background .15s ease, transform .1s ease;
+  }
+  button:hover { opacity: 0.9; }
+  button:active { transform: translateY(1px); }
+  button.secondary { background: var(--panel-2); border-color: var(--border); color: var(--text-color); }
+  button.secondary:hover { background: var(--border); }
+  button.success { background: var(--accent-alt); border-color: var(--accent-alt); }
+  button.wide { width: 100%; }
+
+  .preset-row { display: flex; gap: 8px; }
+  .preset-row select { flex: 1; }
+  .preset-row button { flex: 0 0 auto; }
+
+  .action-buttons { display: flex; flex-direction: column; gap: 8px; margin-top: auto; padding-top: 14px; }
+  .row-buttons { display: flex; gap: 8px; }
+
+  /* ---------- CANVAS AREA ---------- */
+  .canvas-area {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: radial-gradient(circle at 50% 50%, #1e1e26 0%, var(--bg-color) 80%);
+    background-image: radial-gradient(var(--border) 1px, transparent 1px);
+    background-size: 24px 24px;
+    position: relative;
+    gap: 24px;
+  }
+  
+  .medallion {
+    width: 440px; height: 440px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 30%, #b3b3b3 0%, #666666 50%, #333333 100%);
+    border: 4px solid #111;
+    box-shadow:
+      0 0 0 6px var(--bg-color),
+      0 0 0 10px var(--iron),
+      0 25px 50px rgba(0,0,0,0.8);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .medallion::before {
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.8); pointer-events: none;
+  }
+  #svg-container { width: 100%; height: 100%; }
+  #svg-container svg { width: 100%; height: 100%; display: block; }
+  
+  /* Strictly enforce solid fills, preventing strokes globally inside SVG */
+  #svg-container svg * { stroke: none !important; }
+
+  .caption { text-align: center; font-family: var(--font-display); color: var(--text-color); }
+  .caption .name { font-size: 1.8rem; font-weight: 600; letter-spacing: .03em; }
+  .caption .name::before, .caption .name::after { content: "✦"; color: var(--iron); font-size: 1rem; margin: 0 14px; vertical-align: middle; }
+  .caption .sub { font-family: var(--font-body); font-size: .75rem; text-transform: uppercase; letter-spacing: .2em; color: var(--accent); margin-top: 4px; }
+
+  .lang-toggle {
+    margin-top: 10px; padding: 10px 16px; font-family: var(--font-body);
+    font-size: 1rem; font-weight: 600; background: var(--accent); color: #fff;
+    border: 1px solid var(--accent); border-radius: 4px; cursor: pointer;
+    transition: background .15s ease; display: flex; align-items: center; gap: 8px;
+  }
+  .lang-toggle:hover { opacity: 0.9; }
+  .lang-toggle .lang-icon { width: 18px; height: 18px; }
+  .lang-toggle .lang-flag { font-size: 0.9rem; }
+
+</style>
+</head>
+<body>
+
+<div class="workspace">
+  <!-- ============ SIDEBAR ============ -->
+  <div class="sidebar">
+    <div class="brand"><span data-i18n="appTitle">Template Head Forge</span> <small data-i18n="appSubtitle">Front View</small></div>
+
+    <div class="control-group">
+      <h3 class="section-title" data-i18n="characterPresets">Character Presets</h3>
+      <label class="field" for="characterPresetSelect"><strong data-i18n="selectCharacter">Select Character</strong></label>
+      <div class="preset-row">
+        <select id="characterPresetSelect">
+          <!-- Options will be dynamically populated by JavaScript -->
+      </select>
+      <button id="load-preset" data-i18n="load">Load</button>
+      <div id="preset-status" style="display:none; font-size:.72rem; color:#c98a5a; margin-top:8px; line-height:1.4;"></div>
+    </div>
+
+    <div class="control-group">
+    <h3 class="section-title" data-i18n="facialStructure">Facial Structure</h3>
+    <label class="field" data-i18n="faceShape">Face Shape</label>
+        <select id="face-shape">
+          <option value="oval">Oval</option>
+          <option value="square">Square</option>
+          <option value="round">Round</option>
+          <option value="heart">Heart</option>
+        </select>
+      </label>
+      <label class="field">
+        <span class="row">Face Size <span class="val" id="head-size-val">1.0×</span></span>
+        <input type="range" id="head-size" min="0.5" max="1.5" step="0.1" value="1">
+      </label>
+      <label class="field">Forehead Height
+        <select id="forehead-height">
+          <option value="low">Low</option>
+          <option value="medium" selected>Medium</option>
+          <option value="high">High</option>
+        </select>
+      </label>
+      <label class="field">
+        <span class="row">Eye Spacing <span class="val" id="eye-spacing-val">1.0×</span></span>
+        <input type="range" id="eye-spacing" min="0.5" max="1.5" step="0.1" value="1">
+      </label>
+      <label class="field">
+        <span class="row">Ear Size <span class="val" id="ear-size-val">1.0×</span></span>
+        <input type="range" id="ear-size" min="0.5" max="1.5" step="0.1" value="1">
+      </label>
+      <label class="field">Ear Shape
+        <select id="ear-shape">
+          <option value="pointed">Pointed</option>
+          <option value="round">Round</option>
+          <option value="broad">Broad</option>
+          <option value="elfin">Elfin</option>
+        </select>
+      </label>
+      <label class="field">Chin Shape
+        <select id="chin-shape">
+          <option value="rounded">Rounded</option>
+          <option value="square">Square</option>
+          <option value="pointed">Pointed</option>
+          <option value="cleft">Cleft</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="control-group">
+      <h3 class="section-title" data-i18n="facialFeatures">Facial Features</h3>
+      <label class="field">Eye Shape
+        <select id="eye-shape">
+          <option value="almond">Almond</option>
+          <option value="round">Round</option>
+          <option value="narrow">Narrow</option>
+          <option value="downturned">Downturned</option>
+          <option value="upturned">Upturned</option>
+          <option value="hooded">Hooded</option>
+        </select>
+      </label>
+      <label class="field">Eyebrows
+        <select id="eyebrow-style">
+          <option value="arched">Arched</option>
+          <option value="straight">Straight</option>
+          <option value="thick">Thick</option>
+          <option value="thin">Thin</option>
+          <option value="furrowed">Furrowed</option>
+        </select>
+      </label>
+      <label class="field">Nose Shape
+        <select id="nose-shape">
+          <option value="straight">Straight</option>
+          <option value="aquiline">Aquiline / Hooked</option>
+          <option value="wide">Wide</option>
+          <option value="button">Button</option>
+        </select>
+      </label>
+      <label class="field">
+        <span class="row">Nose Scale <span class="val" id="nose-scale-val">1.0×</span></span>
+        <input type="range" id="nose-scale" min="0.75" max="1.4" step="0.05" value="1">
+      </label>
+      <label class="field">Mouth
+        <select id="mouth-style">
+          <option value="neutral">Neutral</option>
+          <option value="smile">Smile</option>
+          <option value="frown">Frown</option>
+          <option value="small">Small</option>
+          <option value="open">Open / Speaking</option>
+        </select>
+      </label>
+      <label class="field">Health / Expression
+        <select id="health-state">
+          <option value="well">Well</option>
+          <option value="tb_unwell">Unwell — TB symptoms</option>
+          <option value="recovering">Recovering</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="control-group">
+      <h3 class="section-title" data-i18n="hairAndAssets">Hair & Assets</h3>
+      <label class="field">Hair Style
+        <select id="hair-style">
+          <option value="bald">Bald</option>
+          <option value="buzz">Buzz Cut</option>
+          <option value="short">Short</option>
+          <option value="wavy">Wavy</option>
+          <option value="curly">Curly</option>
+          <option value="afro">Afro</option>
+          <option value="receding">Receding</option>
+          <option value="flowing">Flowing</option>
+          <option value="braids">Braids</option>
+          <option value="tied_back">Tied Back</option>
+          <option value="shoulder_waves">Shoulder-Length Waves</option>
+          <option value="side_braid">Side Braid</option>
+          <option value="crown_braids">Crown Braids</option>
+          <option value="locs">Locs</option>
+          <option value="shaved_sides">Shaved Sides</option>
+        </select>
+      </label>
+      <label class="field">
+        <span class="row">Hair Size <span class="val" id="hair-size-val">1.0×</span></span>
+        <input type="range" id="hair-size" min="0.5" max="2.0" step="0.1" value="1">
+      </label>
+      <label class="field">Beard
+        <select id="beard-style">
+          <option value="none">Clean Shaven</option>
+          <option value="stubble">Stubble</option>
+          <option value="short">Short</option>
+          <option value="medium">Medium</option>
+          <option value="full_round">Full & Rounded</option>
+          <option value="pointed">Pointed</option>
+          <option value="long">Long / Patriarch</option>
+        </select>
+      </label>
+      <label class="field">Head Covering
+        <select id="hat-style">
+          <option value="none">None</option>
+          <option value="hood">Hood / Mantle</option>
+          <option value="turban">Turban</option>
+          <option value="skullcap">Skullcap</option>
+          <option value="headscarf">Headscarf</option>
+          <option value="helmet">Roman Helmet</option>
+          <option value="veil">Light Veil</option>
+          <option value="wrapped_scarf">Wrapped Scarf</option>
+          <option value="shepherd_wrap">Shepherd Wrap</option>
+          <option value="royal_diadem">Royal Diadem</option>
+           <option value="nepali_topi">Nepali Dhaka Topi</option>
+           <option value="nepali_headshawl">Nepali Head Shawl</option>
+          <option value="pharaoh_crown">Egyptian Crown</option>
+          <option value="battle_helmet">Bronze Battle Helmet</option>
+        </select>
+      </label>
+      <label class="field">
+        <span class="row">Head Covering Size <span class="val" id="hat-size-val">1.0×</span></span>
+        <input type="range" id="hat-size" min="0.5" max="2.0" step="0.1" value="1">
+      </label>
+      <div class="checkbox-row">
+        <input type="checkbox" id="hat-match-hair">
+        <label for="hat-match-hair" data-i18n="matchHeadCoveringToHair">Match head covering to hair color</label>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <h3 class="section-title" data-i18n="wardrobeSetup">Wardrobe Setup</h3>
+      <label class="field">Clothing Layering
+        <select id="clothing-type">
+          <option value="tunic">Basic Tunic</option>
+          <option value="layered_robe">Layered Robe</option>
+          <option value="priestly_ephod">Priestly Ephod</option>
+          <option value="military_lorica">Military Lorica</option>
+          <option value="merchant_sash">Merchant Sash</option>
+          <option value="peasant_rags">Peasant Rags</option>
+          <option value="work_tunic">Work Tunic</option>
+          <option value="traveller_cloak">Traveller Cloak</option>
+          <option value="desert_mantle">Desert Mantle</option>
+          <option value="prophet_mantle">Prophet Mantle</option>
+          <option value="court_dress">Court Dress</option>
+          <option value="royal_robes">Royal Robes</option>
+           <option value="daura_suruwal">Daura Suruwal</option>
+           <option value="kurta_suruwal">Kurta Suruwal</option>
+           <option value="sari_shawl">Sari & Shawl</option>
+           <option value="medical_coat">Medical Coat</option>
+           <option value="village_shawl">Village Shawl</option>
+        </select>
+      </label>
+      <label class="field">Garment Texture
+        <select id="material-style">
+          <option value="woven_linen">Woven Linen</option>
+          <option value="fine_linen">Fine Linen</option>
+          <option value="herringbone">Herringbone</option>
+          <option value="basket_weave">Basket Weave</option>
+          <option value="dotted">Dotted Textile</option>
+          <option value="tartan">Tartan / Checked</option>
+          <option value="scales">Armour Scales</option>
+          <option value="plain">Plain Cloth</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="control-group">
+      <h3 class="section-title" data-i18n="wardrobeColors">Wardrobe Colors (4-Tier)</h3>
+      <div class="color-grid">
+        <div class="color-field">Inner Dress <input type="color" id="color-inner" value="#2a2a2a"></div>
+        <div class="color-field">Outer Dress <input type="color" id="color-outer" value="#1a1a1a"></div>
+        <div class="color-field">Heavy Cloak <input type="color" id="color-cloak" value="#0d0d0d"></div>
+        <div class="color-field">Decorations <input type="color" id="color-accent" value="#8b0000"></div>
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="dual-stripe">
+        <label for="dual-stripe" data-i18n="dualStripe">Dual-color stripe (sash / trim)</label>
+      </div>
+      <div class="color-field" id="stripe-row" style="display:none;">Stripe Color <input type="color" id="color-garment2" value="#d4af37"></div>
+    </div>
+
+    <div class="control-group">
+      <h3 class="section-title" data-i18n="physiqueColors">Physique Colors</h3>
+      <div class="color-grid">
+        <div class="color-field">Face / Body <input type="color" id="color-skin" value="#d2a679"></div>
+        <div class="color-field">Eyes <input type="color" id="color-eye" value="#4a3b32"></div>
+        <div class="color-field">Lips <input type="color" id="color-lip" value="#a85d5d"></div>
+        <div class="color-field">Hair / Beard <input type="color" id="color-hair" value="#2a2a2a"></div>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <div class="row-buttons">
+        <button class="wide" id="export-svg" data-i18n="exportSVG">Download .SVG</button>
+        <button class="wide secondary" id="export-json" data-i18n="saveJSON">Save .JSON</button>
+      </div>
+      <button class="wide success" id="export-batch" data-i18n="batchDownload">Batch Download All Presets (ZIP)</button>
+      <button type="button" id="langToggle" class="lang-toggle" aria-label="Select Language"><span class="lang-flag" aria-hidden="true">English</span><svg class="lang-icon" viewBox="0 0 64 64" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 9h49v6H10z"/><path d="M10 15H59V55H10z"/><path d="M12 8a1 1 0 0 0-1 1v40a1 1 0 0 0 1 1h45c.553 0 1-.447 1-1V9a1 1 0 0 0-1-1H12z"/><path d="M55 11a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/><path d="M51 11a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/><path d="M47 11a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/><path d="M23 31a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2v4l3.44-4h4a1 1 0 0 0 1-1V32a1 1 0 0 0-1-1h-9z"/><path d="M23 30a1 1 0 0 0-1 1v6a1 1 0 0 0 2 0v-6h7a1 1 0 0 0 0-2h-8z"/><path d="M34 21a1 1 0 0 1 1 1v12a1 1 0 0 1-2 0V22a1 1 0 0 1 1-1h1zm-1 0a1 1 0 0 1 1 1v12a1 1 0 0 1-2 0V22a1 1 0 0 1 1-1z"/><path d="M41 33a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0v-6a1 1 0 0 1 1-1zm0-12a1 1 0 0 0-1 1v12a1 1 0 0 0 2 0V22a1 1 0 0 0-1-1z"/></svg></button>
+    </div>
+  </div>
+  </div>
+
+  <!-- ============ CANVAS ============ -->
+  <div class="canvas-area">
+    <div class="medallion">
+      <div id="svg-container"></div>
+    </div>
+    <div class="caption">
+      <div class="name" id="caption-name">Custom Character</div>
+      <div class="sub" id="caption-sub">unsaved configuration</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="character_presets.js"></script>
+<script>
+/* ==========================================================
+   CORE RENDER LOGIC — Front View SVG Construction
+   Strictly solid fills. Pure modular functions.
+   ========================================================== */
+
+function shadeColor(hex, amt) {
+    let c = hex.replace('#','');
+    if (c.length === 3) c = c.split('').map(x => x+x).join('');
+    const num = parseInt(c, 16);
+    let r = (num>>16)+amt, g = ((num>>8)&0xff)+amt, b = (num&0xff)+amt;
+    r = Math.max(Math.min(255,r),0); g = Math.max(Math.min(255,g),0); b = Math.max(Math.min(255,b),0);
+    return "#" + r.toString(16).padStart(2,'0') + g.toString(16).padStart(2,'0') + b.toString(16).padStart(2,'0');
+}
+
+function mirror(inner) {
+    return `<g transform="translate(200,0) scale(-1,1)">${inner}</g>`;
+}
+
+// Scales markup around the same head center/anchor used by the face, so
+// hair, beard, ears, and hats all grow/shrink together with Face Size
+// instead of staying fixed while the face changes size underneath them.
+function scaleWithHead(markup, headSize) {
+    if (headSize !== 1.0) {
+        return `<g transform="translate(100,100) scale(${headSize}) translate(-100,-100)">${markup}</g>`;
+    }
+    return markup;
+}
+
+/* ---------- ANATOMY ---------- */
+function anatomyBase(colorSkin) {
+    const neckShadow = shadeColor(colorSkin, -30);
+    return `
+        <!-- Neck -->
+        <path d="M82,145 L82,185 C90,195 110,195 118,185 L118,145 Z" fill="${colorSkin}"/>
+        <path d="M82,145 L82,165 C90,175 110,175 118,165 L118,145 Z" fill="${neckShadow}" opacity="0.5"/>
+        <!-- Shoulders / Base Torso -->
+        <path d="M30,240 C35,190 60,170 82,170 L118,170 C140,170 165,190 170,240 Z" fill="${colorSkin}"/>
+    `;
+}
+
+/* ---------- EARS ---------- */
+function earMarkup(colorSkin, earSize, earShape, headSize) {
+    let leftEar, rightEar;
+    switch(earShape) {
+        case "round":
+            leftEar = `<path d="M48,95 C42,95 34,95 34,105 C34,115 42,122 48,118 C54,122 62,115 62,105 C62,95 54,95 48,95 Z" fill="${colorSkin}"/>`;
+            rightEar = `<path d="M152,95 C158,95 166,95 166,105 C166,115 158,122 152,118 C146,122 138,115 138,105 C138,95 146,95 152,95 Z" fill="${colorSkin}"/>`;
+            break;
+        case "broad":
+            leftEar = `<path d="M48,96 C42,90 24,94 24,108 C24,120 34,126 46,122 C48,118 50,110 48,96 Z" fill="${colorSkin}"/>`;
+            rightEar = `<path d="M152,96 C158,90 176,94 176,108 C176,120 166,126 154,122 C152,118 150,110 152,96 Z" fill="${colorSkin}"/>`;
+            break;
+        case "elfin":
+            leftEar = `<path d="M48,95 C45,90 34,90 34,108 C34,116 38,120 44,118 C46,108 47,100 48,95 Z" fill="${colorSkin}"/>`;
+            rightEar = `<path d="M152,95 C155,90 166,90 166,108 C166,116 162,120 156,118 C154,108 153,100 152,95 Z" fill="${colorSkin}"/>`;
+            break;
+        case "pointed":
+        default:
+            leftEar = `<path d="M48,96 C42,92 26,96 28,108 C30,118 38,124 46,120 C48,114 48,105 48,96 Z" fill="${colorSkin}"/>`;
+            rightEar = `<path d="M152,96 C158,92 174,96 172,108 C170,118 162,124 154,120 C152,114 152,105 152,96 Z" fill="${colorSkin}"/>`;
+            break;
+    }
+    const scaleLeft = (svg) => `<g transform="translate(48,95) scale(${earSize}) translate(-48,-95)">${svg}</g>`;
+    const scaleRight = (svg) => `<g transform="translate(152,95) scale(${earSize}) translate(-152,-95)">${svg}</g>`;
+    const ears = scaleLeft(leftEar) + scaleRight(rightEar);
+    // Bind ears to the same center/scale as the face (headSize) so they stay
+    // attached to the jawline instead of drifting when Face Size changes.
+    if (headSize !== 1.0) {
+        return `<g transform="translate(100,100) scale(${headSize}) translate(-100,-100)">${ears}</g>`;
+    }
+    return ears;
+}
+
+/* ---------- FACE SHAPES ----------
+   Each shape uses a distinct cheek width, taper, and jaw termination so the
+   four options read as clearly different silhouettes at a glance. */
+function faceMarkup(shape, foreHeight, colorSkin, headSize) {
+    let path;
+    const fy = foreHeight === "high" ? 18 : (foreHeight === "low" ? 30 : 25);
+    switch(shape) {
+        case "square":
+            // Wide, boxy cheeks that stay nearly vertical down to a broad, flat jaw.
+            path = `M100,${fy} C138,${fy} 156,50 156,90 C156,120 154,148 146,166 C140,178 122,182 100,182 C78,182 60,178 54,166 C46,148 44,120 44,90 C44,50 62,${fy} 100,${fy} Z`;
+            break;
+        case "round":
+            // Wide circular cheeks with a soft, full jaw that never tapers to a point.
+            path = `M100,${fy} C140,${fy} 160,56 160,98 C160,126 156,150 144,166 C132,182 116,190 100,190 C84,190 68,182 56,166 C44,150 40,126 40,98 C40,56 60,${fy} 100,${fy} Z`;
+            break;
+        case "heart":
+            // Broad temples/cheekbones narrowing sharply to a small, pointed chin.
+            path = `M100,${fy} C148,${fy} 166,48 162,88 C159,116 150,140 136,156 L118,178 C112,183 106,187 100,188 C94,187 88,183 82,178 L64,156 C50,140 41,116 38,88 C34,48 52,${fy} 100,${fy} Z`;
+            break;
+        case "oval":
+        default:
+            // Balanced, gently egg-shaped taper — the default versatile face.
+            path = `M100,${fy} C132,${fy} 152,52 152,92 C152,128 142,152 128,166 C117,176 108,180 100,180 C92,180 83,176 72,166 C58,152 48,128 48,92 C48,52 68,${fy} 100,${fy} Z`;
+    }
+    const facePath = `<path d="${path}" fill="${colorSkin}"/>`;
+    if (headSize !== 1.0) {
+        return `<g transform="translate(100,100) scale(${headSize}) translate(-100,-100)">${facePath}</g>`;
+    }
+    return facePath;
+}
+
+/* ---------- CHIN SHAPES ----------
+   Solid skin-toned overlays (not just faint shadows) so the chin selection is
+   visibly different regardless of which face shape it's paired with. Wrapped
+   in the same headSize transform as the face so it stays locked in place. */
+function chinMarkup(shape, colorSkin, headSize) {
+    const shadow = shadeColor(colorSkin, -28);
+    let markup;
+    switch(shape) {
+        case "square":
+            markup = `
+                <path d="M76,162 L124,162 C124,172 122,180 116,184 L84,184 C78,180 76,172 76,162 Z" fill="${colorSkin}"/>
+                <path d="M80,178 L120,178 L120,184 L80,184 Z" fill="${shadow}" opacity="0.3"/>
+            `;
+            break;
+        case "pointed":
+            markup = `
+                <path d="M82,160 C82,170 87,182 100,188 C113,182 118,170 118,160 C118,170 111,177 100,179 C89,177 82,170 82,160 Z" fill="${colorSkin}"/>
+                <path d="M92,178 L100,188 L108,178 Z" fill="${shadow}" opacity="0.22"/>
+            `;
+            break;
+        case "cleft":
+            markup = `
+                <path d="M84,163 L116,163 C116,174 111,182 100,185 C89,182 84,174 84,163 Z" fill="${colorSkin}"/>
+                <path d="M98.3,171 L101.7,171 L101.3,183 L98.7,183 Z" fill="${shadow}" opacity="0.45"/>
+            `;
+            break;
+        case "rounded":
+        default:
+            markup = `
+                <path d="M86,163 L114,163 C114,174 108,183 100,185 C92,183 86,174 86,163 Z" fill="${colorSkin}"/>
+                <path d="M90,178 C94,181 106,181 110,178 C106,180.5 94,180.5 90,178 Z" fill="${shadow}" opacity="0.2"/>
+            `;
+    }
+    if (headSize !== 1.0) {
+        return `<g transform="translate(100,100) scale(${headSize}) translate(-100,-100)">${markup}</g>`;
+    }
+    return markup;
+}
+
+/* ---------- WARDROBE ---------- */
+function wardrobeMarkup(style, cInner, cOuter, cCloak, cAccent) {
+    let result = "";
+    // Apply cloth texture to fabric-based base layers
+    if (["layered_robe", "military_lorica", "priestly_ephod"].includes(style)) {
+        result += `<path d="M20,240 L30,165 C60,150 140,150 170,165 L180,240 Z" fill="${cCloak}" /><path d="M20,240 L30,165 C60,150 140,150 170,165 L180,240 Z" fill="url(#cloth-texture)" />`;
+    }
+
+    switch (style) {
+        case "tunic":
+            result += `
+                <path d="M80,170 L100,200 L120,170 Z" fill="${cInner}" />
+                <path d="M30,240 C34,200 42,182 55,172 C70,162 130,162 145,172 C158,182 166,200 170,240 Z" fill="${cOuter}" />
+                <path d="M80,170 L100,200 L120,170 C140,175 145,190 170,240 L30,240 C55,190 60,175 80,170 Z" fill="${cOuter}" opacity="0.8"/>
+            `;
+            break;
+        case "layered_robe":
+            result += `
+                <path d="M50,240 L60,165 L100,210 L140,165 L150,240 Z" fill="${cInner}" /><path d="M50,240 L60,165 L100,210 L140,165 L150,240 Z" fill="url(#cloth-texture)" />
+                <path d="M30,240 L40,180 L80,210 L30,240 Z" fill="${cOuter}" /><path d="M30,240 L40,180 L80,210 L30,240 Z" fill="url(#cloth-texture)" />
+                <path d="M170,240 L160,180 L120,210 L170,240 Z" fill="${cOuter}" /><path d="M170,240 L160,180 L120,210 L170,240 Z" fill="url(#cloth-texture)" />
+                <path d="M70,240 L80,180 L120,180 L130,240 Z" fill="${cAccent}" opacity="0.6"/><path d="M70,240 L80,180 L120,180 L130,240 Z" fill="url(#cloth-texture)" opacity="0.6"/>
+            `;
+            break;
+        case "priestly_ephod":
+            result += `
+                <path d="M30,240 L45,180 C60,165 140,165 155,180 L170,240 Z" fill="${cInner}" />
+                <path d="M70,175 L130,175 L130,240 L70,240 Z" fill="${cOuter}" />
+                <rect x="85" y="185" width="30" height="30" fill="${cAccent}" rx="4"/>
+                <rect x="85" y="185" width="30" height="30" fill="url(#metal-texture)" rx="4"/>
+                <circle cx="92" cy="192" r="3" fill="#ffffff" opacity="0.3"/>
+                <circle cx="108" cy="192" r="3" fill="#ffffff" opacity="0.3"/>
+                <circle cx="92" cy="208" r="3" fill="#ffffff" opacity="0.3"/>
+                <circle cx="108" cy="208" r="3" fill="#ffffff" opacity="0.3"/>
+            `;
+            break;
+        case "military_lorica":
+            result += `
+                <path d="M50,240 L60,170 L140,170 L150,240 Z" fill="${cInner}" />
+                <path d="M45,200 L155,200 L155,215 L45,215 Z" fill="${cOuter}" />
+                <path d="M42,220 L158,220 L158,235 L42,235 Z" fill="${cOuter}" />
+                <path d="M30,240 C35,190 60,170 80,170 L85,210 C50,210 40,240 30,240 Z" fill="${cOuter}" />
+                <path d="M170,240 C165,190 140,170 120,170 L115,210 C150,210 160,240 170,240 Z" fill="${cOuter}" />
+                <circle cx="100" cy="185" r="10" fill="${cAccent}" /><!-- Metal Brooch -->
+                <circle cx="100" cy="185" r="10" fill="url(#metal-texture)" />
+            `;
+            break;
+        case "merchant_sash":
+            result += `
+                <path d="M30,240 C34,200 42,182 55,172 C70,162 130,162 145,172 C158,182 166,200 170,240 Z" fill="${cInner}" />
+                <path d="M30,240 C34,200 44,180 60,170 C100,180 140,200 170,240 Z" fill="${cOuter}" />
+                <path d="M40,240 L65,170 L100,190 L160,240 Z" fill="${cAccent}" />
+            `;
+            break;
+        case "peasant_rags":
+            result += `
+                <path d="M30,240 C34,205 40,188 50,180 L65,195 L80,175 L100,190 L120,175 L135,195 L150,180 C160,188 166,205 170,240 Z" fill="${cOuter}" />
+                <path d="M30,240 L45,190 L55,200 L70,180 L80,240 Z" fill="${cInner}" opacity="0.7"/>
+                <path d="M170,240 L155,190 L145,200 L130,180 L120,240 Z" fill="${cInner}" opacity="0.7"/>
+            `;
+            break;
+        case "work_tunic":
+            result += `<path d="M28,240 Q34,184 61,170 L86,174 L100,194 L114,174 L139,170 Q166,184 172,240Z" fill="${cOuter}"/><path d="M61,170L82,168L100,194L118,168L139,170L128,240H72Z" fill="${cInner}"/><path d="M42,205H158V216H42Z" fill="${cAccent}" opacity=".75"/><path d="M28,240 Q34,184 61,170 L86,174 L100,194 L114,174 L139,170 Q166,184 172,240Z" fill="url(#cloth-texture)"/>`;
+            break;
+        case "traveller_cloak":
+            result += `<path d="M20,240Q25,178 61,163Q80,154 100,171Q120,154 139,163Q175,178 180,240Z" fill="${cCloak}"/><path d="M52,240L61,168L100,205L139,168L148,240Z" fill="${cInner}"/><path d="M28,182Q64,151 96,176L67,240H24Z" fill="${cOuter}"/><circle cx="91" cy="174" r="7" fill="${cAccent}"/><path d="M20,240Q25,178 61,163Q80,154 100,171Q120,154 139,163Q175,178 180,240Z" fill="url(#cloth-texture)"/>`;
+            break;
+        case "desert_mantle":
+            result += `<path d="M18,240Q26,180 57,164L100,187L143,164Q174,180 182,240Z" fill="${cCloak}"/><path d="M48,240L57,166L100,190L143,166L152,240Z" fill="${cOuter}"/><path d="M77,171L100,198L123,171L116,240H84Z" fill="${cInner}"/><path d="M25,208Q100,188 175,208" fill="none" stroke="${cAccent}" stroke-width="8"/><path d="M18,240Q26,180 57,164L100,187L143,164Q174,180 182,240Z" fill="url(#cloth-texture)"/>`;
+            break;
+        case "prophet_mantle":
+            result += `<path d="M16,240Q25,176 58,158L100,179L142,158Q175,176 184,240Z" fill="${cCloak}"/><path d="M31,240L58,162L100,184L142,162L169,240Z" fill="${cOuter}"/><path d="M76,170L100,197L124,170L118,240H82Z" fill="${cInner}"/><path d="M39,196L69,170M161,196L131,170" stroke="${cAccent}" stroke-width="5" opacity=".7"/><path d="M16,240Q25,176 58,158L100,179L142,158Q175,176 184,240Z" fill="url(#cloth-texture)"/>`;
+            break;
+        case "court_dress":
+            result += `<path d="M25,240Q31,180 58,164L100,174L142,164Q169,180 175,240Z" fill="${cOuter}"/><path d="M61,164L100,199L139,164L132,240H68Z" fill="${cInner}"/><path d="M78,178L100,197L122,178L116,240H84Z" fill="${cAccent}" opacity=".75"/><path d="M40,207H160" stroke="${cAccent}" stroke-width="6"/><path d="M25,240Q31,180 58,164L100,174L142,164Q169,180 175,240Z" fill="url(#cloth-texture)"/>`;
+            break;
+        case "daura_suruwal":
+            result += `<path d="M26,240Q32,184 58,168L83,169L100,191L117,169L142,168Q168,184 174,240Z" fill="${cOuter}"/><path d="M61,168L100,201L139,168L132,240H68Z" fill="${cInner}"/><path d="M72,178L128,178L120,190L80,190Z" fill="${cAccent}"/><path d="M38,213H162V220H38Z" fill="${cAccent}" opacity=".75"/><path d="M26,240Q32,184 58,168L83,169L100,191L117,169L142,168Q168,184 174,240Z" fill="url(#cloth-texture)"/>`;
+            break;
+        case "kurta_suruwal":
+            result += `<path d="M28,240Q34,184 60,169L84,170L100,195L116,170L140,169Q166,184 172,240Z" fill="${cOuter}"/><path d="M75,168L100,198L125,168L119,240H81Z" fill="${cInner}"/><path d="M96,177H104V222H96Z" fill="${cAccent}" opacity=".8"/><circle cx="100" cy="184" r="2" fill="${cAccent}"/><circle cx="100" cy="194" r="2" fill="${cAccent}"/><path d="M28,240Q34,184 60,169L84,170L100,195L116,170L140,169Q166,184 172,240Z" fill="url(#cloth-texture)"/>`;
+            break;
+        case "sari_shawl":
+            result += `<path d="M25,240Q32,184 58,168L100,181L142,168Q168,184 175,240Z" fill="${cInner}"/><path d="M28,240Q39,186 66,169Q102,185 170,240Z" fill="${cOuter}"/><path d="M44,240L66,170L82,178L62,240Z" fill="${cAccent}"/><path d="M28,240Q39,186 66,169Q102,185 170,240Z" fill="url(#cloth-texture)"/>`;
+            break;
+        case "medical_coat":
+            result += `<path d="M25,240Q31,181 58,166L84,169L100,194L116,169L142,166Q169,181 175,240Z" fill="#f7f5ef"/><path d="M58,166L100,203L142,166L132,240H68Z" fill="#ffffff"/><path d="M82,170L100,194L118,170L112,240H88Z" fill="${cInner}"/><circle cx="140" cy="211" r="15" fill="${cAccent}"/><circle cx="140" cy="211" r="10" fill="#f7f5ef"/><rect x="138" y="223" width="4" height="13" rx="2" fill="${cAccent}"/><circle cx="140" cy="238" r="4" fill="${cAccent}"/>`;
+            break;
+        case "village_shawl":
+            result += `<path d="M20,240Q26,180 58,163L100,183L142,163Q174,180 180,240Z" fill="${cCloak}"/><path d="M43,240L59,167L100,191L141,167L157,240Z" fill="${cInner}"/><path d="M22,206Q62,183 100,196Q138,183 178,206V224Q139,202 100,214Q61,202 22,224Z" fill="${cOuter}"/><path d="M22,206Q62,183 100,196Q138,183 178,206V224Q139,202 100,214Q61,202 22,224Z" fill="url(#cloth-texture)"/>`;
+            break;
+        case "royal_robes":
+            result += `<path d="M14,240Q20,174 56,155L100,175L144,155Q180,174 186,240Z" fill="${cCloak}"/><path d="M42,240L56,160L100,188L144,160L158,240Z" fill="${cOuter}"/><path d="M72,165L100,197L128,165L120,240H80Z" fill="${cInner}"/><path d="M29,199Q100,177 171,199" fill="none" stroke="${cAccent}" stroke-width="9"/><circle cx="100" cy="181" r="9" fill="url(#metal-texture)"/><path d="M14,240Q20,174 56,155L100,175L144,155Q180,174 186,240Z" fill="url(#cloth-texture)"/>`;
+            break;
+    }
+
+    // Legacy silhouettes predate the texture selector. Apply a garment-shaped
+    // overlay so every wardrobe option responds visibly to materialStyle.
+    if (style === "tunic" || style === "merchant_sash") {
+        result += `<path d="M30,240 C34,200 42,182 55,172 C70,162 130,162 145,172 C158,182 166,200 170,240 Z" fill="url(#cloth-texture)" opacity="0.78"/>`;
+    } else if (style === "peasant_rags") {
+        result += `<path d="M30,240 C34,205 40,188 50,180 L65,195 L80,175 L100,190 L120,175 L135,195 L150,180 C160,188 166,205 170,240 Z" fill="url(#cloth-texture)" opacity="0.78"/>`;
+    }
+
+    return result;
+}
+
+/* ---------- GARMENT STRIPE OVERLAY ---------- */
+function garmentStripeMarkup(dual, cStripe) {
+    if (!dual) return "";
+    return `<clipPath id="garmentClip"><path d="M40,240 L40,202 C40,178 66,168 100,168 C134,168 160,178 160,202 L160,240 Z"/></clipPath>
+        <g clip-path="url(#garmentClip)">
+            <path d="M55,168 L80,168 L58,240 L33,240 Z" fill="${cStripe}"/>
+        </g>`;
+}
+
+/* ---------- EYES ---------- */
+function eyeMarkup(style, spacing, colorEye, colorSkin) {
+    const cx = 77 + (spacing - 1) * 6, cy = 93;
+    let white, irisR = 5, irisCx = cx, irisCy = cy, lid = "";
+    switch(style) {
+        case "round":
+            white = `<circle cx="${cx}" cy="${cy}" r="9" fill="#fdfaf1"/>`;
+            irisR = 5.5; break;
+        case "narrow":
+            white = `<ellipse cx="${cx}" cy="${cy}" rx="13" ry="4.2" fill="#fdfaf1"/>`;
+            irisR = 3.6; break;
+        case "downturned":
+            white = `<path d="M63,90 C68,85 87,86 91,93 C86,101 68,100 63,90 Z" fill="#fdfaf1"/>`;
+            irisCx = cx + 1; irisCy = cy + 2; break;
+        case "upturned":
+            white = `<path d="M63,95 C69,84 88,84 91,90 C85,98 68,99 63,95 Z" fill="#fdfaf1"/>`;
+            irisCx = cx + 1; irisCy = cy - 2; break;
+        case "hooded":
+            white = `<path d="M64,92 C69,85 85,85 90,92 C85,99 69,99 64,92 Z" fill="#fdfaf1"/>`;
+            lid = `<path d="M61,85 C68,80 86,80 93,86 C86,84 70,84 61,85 Z" fill="${colorSkin}"/>`;
+            break;
+        case "almond":
+        default:
+            white = `<path d="M64,92 C69,85 85,85 90,92 C85,99 69,99 64,92 Z" fill="#fdfaf1"/>`;
+    }
+    const iris  = `<circle cx="${irisCx}" cy="${irisCy}" r="${irisR}" fill="${colorEye}"/>`;
+    const pupil = `<circle cx="${irisCx}" cy="${irisCy}" r="${irisR*0.4}" fill="#1a1410"/>`;
+    const glint = `<circle cx="${irisCx+1.4}" cy="${irisCy-1.4}" r="${irisR*0.22}" fill="#ffffff"/>`;
+    const singleEye = `${white}${iris}${pupil}${glint}${lid}`;
+    return singleEye + mirror(singleEye);
+}
+
+/* ---------- EYEBROWS ---------- */
+function eyebrowMarkup(style, colorHair) {
+    let path;
+    switch(style) {
+        case "straight":  path = "M63,77 L90,74 L90,77.5 L63,80 Z"; break;
+        case "thick":     path = "M62,80 C69,68 84,67 91,75 C84,70 69,71 62,80 Z"; break;
+        case "thin":      path = "M64,77 L90,75 L90,76.3 L64,78.3 Z"; break;
+        case "furrowed":  path = "M63,71 L90,81 L90,84.5 L63,74.5 Z"; break;
+        case "arched":
+        default:          path = "M64,78 C70,68 84,67 90,76 C84,71 70,72 64,78 Z";
+    }
+    const singleBrow = `<path d="${path}" fill="${colorHair}"/>`;
+    return singleBrow + mirror(singleBrow);
+}
+
+/* ---------- NOSE ---------- */
+function noseMarkup(shape, scale, colorSkin) {
+    const shadowClr = shadeColor(colorSkin, -28);
+    let path;
+    switch(shape) {
+        case "aquiline":
+            path = `M99,93 C104,100 108,108 105,116 C109,118 111,122 109,125 L91,125 C89,122 91,118 95,116 C92,108 96,100 99,93 Z`; break;
+        case "wide":
+            path = `M97,94 C94,104 89,113 87,119 C86,124 90,127 96,128 L104,128 C110,127 114,124 113,119 C111,113 106,104 103,94 Z`; break;
+        case "button":
+            path = `M99,100 C96,107 93,112 93,116 C93,121 106,121 106,116 C106,112 103,107 100,100 Z`; break;
+        case "straight":
+        default:
+            path = `M97,94 C95,104 91,114 89,119 C88,123 91,126 96,127 L104,127 C109,126 112,123 111,119 C109,114 105,104 103,94 Z`;
+    }
+    const nostrils = `
+        <ellipse cx="94.5" cy="122" rx="2" ry="1.4" fill="${shadowClr}" opacity="0.85"/>
+        <ellipse cx="105.5" cy="122" rx="2" ry="1.4" fill="${shadowClr}" opacity="0.85"/>
+    `;
+    const body = `<path d="${path}" fill="${shadowClr}" opacity="0.32"/>${nostrils}`;
+    return `<g transform="translate(100,110) scale(${scale}) translate(-100,-110)">${body}</g>`;
+}
+
+/* ---------- MOUTH ---------- */
+function mouthMarkup(style, colorLip) {
+    let d, extra = "";
+    switch(style) {
+        case "smile":  d = "M78,140 C85,152 115,152 122,140 C115,148 85,148 78,140 Z"; break;
+        case "frown":  d = "M78,150 C85,140 115,140 122,150 C115,144 85,144 78,150 Z"; break;
+        case "small":  d = "M88,142 C92,146 108,146 112,142 C108,146.5 92,146.5 88,142 Z"; break;
+        case "open":
+            d = "M80,139 C88,144 112,144 120,139 C115,150 85,150 80,139 Z";
+            extra = `<path d="M85,141 C90,145 110,145 115,141 C112,144 88,144 85,141 Z" fill="#3a1f1f"/>`;
+            break;
+        case "neutral":
+        default:       d = "M82,142 C90,146 110,146 118,142 C110,150 90,150 82,142 Z";
+    }
+    return `<path d="${d}" fill="${colorLip}"/>${extra}`;
+}
+
+/* ---------- HAIR & BEARD ---------- */
+function hairBackMarkup(style, colorHair, headSize, hairSize) {
+    let markup;
+    if (style === "flowing") {
+        markup = `<path d="M100,25 C60,22 38,50 40,90 C41,130 35,175 30,215 C28,228 34,238 46,238 L64,238 C58,200 58,150 62,110 C64,80 78,55 100,50 C122,55 136,80 138,110 C142,150 142,200 136,238 L154,238 C166,238 172,228 170,215 C165,175 159,130 160,90 C162,50 140,22 100,25 Z" fill="${colorHair}"/>`;
+    } else if (style === "tied_back") {
+        const bun = `<circle cx="40" cy="110" r="20" fill="${colorHair}"/>`;
+        markup = bun + mirror(bun);
+    } else if (style === "braids") {
+        const braidStr = `
+            <circle cx="35" cy="120" r="12" fill="${colorHair}"/>
+            <circle cx="38" cy="140" r="10" fill="${colorHair}"/>
+            <circle cx="35" cy="160" r="10" fill="${colorHair}"/>
+            <circle cx="38" cy="180" r="8" fill="${colorHair}"/>
+            <circle cx="35" cy="195" r="7" fill="${colorHair}"/>
+        `;
+        markup = `<path d="M100,25 C60,22 35,50 35,90 L35,130 L60,130 L60,90 Z" fill="${colorHair}"/>` + 
+               mirror(`<path d="M100,25 C60,22 35,50 35,90 L35,130 L60,130 L60,90 Z" fill="${colorHair}"/>`) +
+               braidStr + mirror(braidStr);
+    } else if (style === "shoulder_waves") {
+        markup = `<path d="M100,22C61,20 39,49 42,91L35,181Q34,207 57,215L72,211Q63,166 65,112Q66,65 100,48Q134,65 135,112Q137,166 128,211L143,215Q166,207 165,181L158,91Q161,20 100,22Z" fill="${colorHair}"/>`;
+    } else if (style === "side_braid") {
+        markup = `<path d="M100,24Q55,24 47,79L53,124H70L68,78Q78,48 100,43Q129,48 138,82L139,118H154L154,75Q145,24 100,24Z" fill="${colorHair}"/><g fill="${colorHair}"><ellipse cx="145" cy="116" rx="11" ry="13"/><ellipse cx="148" cy="138" rx="10" ry="12"/><ellipse cx="146" cy="159" rx="9" ry="11"/><ellipse cx="149" cy="178" rx="8" ry="10"/><ellipse cx="147" cy="195" rx="7" ry="9"/></g>`;
+    } else if (style === "crown_braids") {
+        markup = `<path d="M100,23Q58,23 48,73L52,123H70L68,77Q77,48 100,43Q123,48 132,77L130,123H148L152,73Q142,23 100,23Z" fill="${colorHair}"/>`;
+    } else if (style === "locs") {
+        markup = Array.from({length:8},(_,i)=>`<path d="M${50+i*14},58Q${44+i*15},118 ${48+i*14},192" fill="none" stroke="${colorHair}" stroke-width="9" stroke-linecap="round"/>`).join('');
+    } else {
+        markup = "";
+    }
+    const hairScaled = hairSize !== 1.0 ? `<g transform="translate(100,30) scale(${hairSize}) translate(-100,-30)">${markup}</g>` : markup;
+    return scaleWithHead(hairScaled, headSize);
+}
+
+function hairFrontMarkup(style, colorHair, headSize, hairSize) {
+    let markup;
+    switch(style) {
+        case "bald": markup = ""; break;
+        case "buzz":
+            markup = `<path d="M100,26 C132,26 148,48 147,76 C147,66 142,57 135,52 C136,58 134,63 131,65 C127,50 114,40 100,40 C86,40 73,50 69,65 C66,63 64,58 65,52 C58,57 53,66 53,76 C52,48 68,26 100,26 Z" fill="${colorHair}"/>`;
+            break;
+        case "wavy":
+            markup = `<path d="M100,22 C136,22 154,46 152,80 C151,68 145,56 136,50 C138,58 136,64 132,66 C129,48 114,36 100,36 C86,36 71,48 68,66 C64,64 62,58 64,50 C55,56 49,68 48,80 C46,46 64,22 100,22 Z" fill="${colorHair}"/>
+                <circle cx="50" cy="85" r="8" fill="${colorHair}"/>
+                <circle cx="150" cy="85" r="8" fill="${colorHair}"/>`;
+            break;
+        case "curly":
+            markup = `<path d="M100,28 C130,28 146,48 145,72 C145,64 140,56 133,52 C134,57 132,61 129,63 C126,48 113,38 100,38 C87,38 74,48 71,63 C68,61 66,57 67,52 C60,56 55,64 55,72 C54,48 70,28 100,28 Z" fill="${colorHair}"/>
+                <circle cx="52" cy="60" r="7" fill="${colorHair}"/><circle cx="60" cy="45" r="7" fill="${colorHair}"/>
+                <circle cx="76" cy="33" r="7" fill="${colorHair}"/><circle cx="100" cy="28" r="7.5" fill="${colorHair}"/>
+                <circle cx="124" cy="33" r="7" fill="${colorHair}"/><circle cx="140" cy="45" r="7" fill="${colorHair}"/>
+                <circle cx="148" cy="60" r="7" fill="${colorHair}"/>`;
+            break;
+        case "afro":
+            markup = `<path d="M100,15 C145,15 168,45 165,85 C165,68 158,54 148,48 C150,58 147,66 141,69 C137,45 118,30 100,30 C82,30 63,45 59,69 C53,66 50,58 52,48 C42,54 35,68 35,85 C32,45 55,15 100,15 Z" fill="${colorHair}"/>`;
+            break;
+        case "receding":
+            markup = `<path d="M100,40 C126,38 145,52 148,78 C148,66 142,58 135,53 C136,59 134,64 131,66 C129,52 118,44 108,42 C112,46 112,50 108,52 C102,44 96,44 92,52 C88,50 88,46 92,42 C82,44 71,52 69,66 C66,64 64,59 65,53 C58,58 52,66 52,78 C55,52 74,42 100,40 Z" fill="${colorHair}"/>`;
+            break;
+        case "flowing":
+            markup = `<path d="M100,26 C132,26 148,46 147,72 C147,62 142,54 135,50 C136,56 134,61 131,63 C127,48 114,38 100,38 C86,38 73,48 69,63 C66,61 64,56 65,50 C58,54 53,62 53,72 C52,46 68,26 100,26 Z" fill="${colorHair}"/>`;
+            break;
+        case "braids":
+            markup = `<path d="M100,22 C138,22 156,48 154,85 C154,70 148,58 140,52 C142,60 140,66 136,68 C132,50 112,38 100,38 C88,38 68,50 64,68 C60,66 58,60 60,52 C52,58 46,70 46,85 C44,48 62,22 100,22 Z" fill="${colorHair}"/>`;
+            break;
+        case "tied_back":
+            markup = `<path d="M100,28 C130,28 145,45 145,75 C145,65 140,55 130,50 C125,55 120,58 115,58 C115,45 108,40 100,40 C92,40 85,45 85,58 C80,58 75,55 70,50 C60,55 55,65 55,75 C55,45 70,28 100,28 Z" fill="${colorHair}"/>`;
+            break;
+        case "shoulder_waves":
+            markup = `<path d="M100,21Q139,21 155,60Q145,51 137,54Q139,61 134,67Q127,44 102,39Q82,45 68,66Q62,62 64,53Q54,58 47,75Q46,40 71,27Q84,20 100,21Z" fill="${colorHair}"/><path d="M54,70q10 10 19 0M127,70q10 10 19 0" fill="none" stroke="${shadeColor(colorHair,18)}" stroke-width="4"/>`;
+            break;
+        case "side_braid":
+            markup = `<path d="M100,22Q139,22 155,74Q145,58 135,53Q138,61 133,68Q126,48 103,39Q81,45 66,67Q59,63 62,53Q51,62 47,82Q44,47 67,30Q81,21 100,22Z" fill="${colorHair}"/>`;
+            break;
+        case "crown_braids":
+            markup = `<path d="M47,66Q51,27 100,22Q149,27 153,66Q139,48 126,44Q112,40 100,39Q88,40 74,44Q61,48 47,66Z" fill="${colorHair}"/><path d="M55,48Q100,18 145,48" fill="none" stroke="${shadeColor(colorHair,20)}" stroke-width="9" stroke-dasharray="5 3"/>`;
+            break;
+        case "locs":
+            markup = `<path d="M100,17Q145,17 159,76Q146,57 136,53Q138,62 132,68Q126,45 100,38Q74,45 68,68Q62,62 64,53Q54,57 41,76Q55,17 100,17Z" fill="${colorHair}"/><path d="M52,42l8-12M70,32l3-15M91,27V12M110,27l3-15M130,32l4-15M145,43l8-11" stroke="${shadeColor(colorHair,15)}" stroke-width="6" stroke-linecap="round"/>`;
+            break;
+        case "shaved_sides":
+            markup = `<path d="M67,61Q69,23 100,18Q131,23 133,61Q119,40 100,38Q81,40 67,61Z" fill="${colorHair}"/><path d="M52,72Q55,50 68,43M148,72Q145,50 132,43" fill="none" stroke="${colorHair}" stroke-width="4" opacity=".45"/>`;
+            break;
+        case "short":
+        default:
+            markup = `<path d="M100,22 C138,22 156,48 154,85 C154,70 148,58 140,52 C142,60 140,66 136,68 C132,50 112,38 100,38 C88,38 68,50 64,68 C60,66 58,60 60,52 C52,58 46,70 46,85 C44,48 62,22 100,22 Z" fill="${colorHair}"/>`;
+    }
+    const hairScaled = hairSize !== 1.0 ? `<g transform="translate(100,30) scale(${hairSize}) translate(-100,-30)">${markup}</g>` : markup;
+    return scaleWithHead(hairScaled, headSize);
+}
+
+function beardMarkup(style, colorHair, headSize) {
+    let markup;
+    switch(style) {
+        case "none": markup = ""; break;
+        case "stubble": {
+            const pts = [[72,132],[80,138],[88,144],[96,150],[104,150],[112,144],[120,138],[128,132],[76,140],[84,146],[92,152],[100,154],[108,152],[116,146],[124,140],[80,148],[90,156],[100,159],[110,156],[120,148]];
+            markup = pts.map(([x,y]) => `<circle cx="${x}" cy="${y}" r="1.1" fill="${colorHair}" opacity="0.6"/>`).join("");
+            break;
+        }
+        case "short":
+            markup = `<path d="M70,130 C64,142 66,158 76,168 C84,175 92,178 100,178 C108,178 116,175 124,168 C134,158 136,142 130,130 C126,144 118,152 100,154 C82,152 74,144 70,130 Z" fill="${colorHair}"/>`;
+            break;
+        case "medium":
+            markup = `<path d="M69,129 C61,144 62,162 73,176 C82,186 91,190 100,190 C109,190 118,186 127,176 C138,162 139,144 131,129 C127,146 118,156 100,158 C82,156 73,146 69,129 Z" fill="${colorHair}"/>`;
+            break;
+        case "full_round":
+            markup = `<path d="M66,120 C58,130 58,148 62,160 C55,158 50,150 50,140 C50,155 56,172 70,182 C82,192 92,195 100,195 C108,195 118,192 130,182 C144,172 150,155 150,140 C150,150 145,158 138,160 C142,148 142,130 134,120 C132,140 122,152 100,154 C78,152 68,140 66,120 Z" fill="${colorHair}"/>`;
+            break;
+        case "pointed":
+            markup = `<path d="M68,128 C50,145 65,185 100,210 C135,185 150,145 132,128 C128,148 118,158 100,160 C82,158 72,148 68,128 Z" fill="${colorHair}"/>`;
+            break;
+        case "long":
+        default:
+            markup = `<path d="M70,128 C60,140 58,165 68,185 C78,198 92,204 100,205 C108,204 122,198 132,185 C142,165 140,140 130,128 C126,148 118,160 100,162 C82,160 74,148 70,128 Z" fill="${colorHair}"/>`;
+    }
+    return scaleWithHead(markup, headSize);
+}
+
+/* ---------- HEAD COVERING ---------- */
+function hatMarkup(style, cInner, cOuter, headSize, hatSize) {
+    let markup;
+    switch(style) {
+        case "none": markup = ""; break;
+        case "turban":
+            markup = `
+                <path d="M55,55 C55,30 75,15 100,15 C125,15 145,30 145,55 C145,65 140,70 133,68 C136,50 122,32 100,32 C78,32 64,50 67,68 C60,70 55,65 55,55 Z" fill="${cOuter}"/><rect x="55" y="15" width="90" height="55" fill="url(#cloth-texture)" />
+                <path d="M62,42 C78,36 122,36 138,42 C138,46 134,48 128,46 C112,42 88,42 72,46 C66,48 62,46 62,42 Z" fill="${cOuter}" opacity="0.6"/>
+                <path d="M95,15 C90,20 90,28 96,32 L104,32 C110,28 110,20 105,15 Z" fill="${cInner}"/><path d="M95,15 C90,20 90,28 96,32 L104,32 C110,28 110,20 105,15 Z" fill="url(#metal-texture)"/>
+            `;
+            break;
+        case "hood":
+            markup = `
+                <path d="M100,10 C60,10 42,42 44,85 C45,120 42,160 36,205 C34,222 42,236 58,236 L74,236 C68,195 68,140 72,100 C74,68 84,40 100,38 C116,40 126,68 128,100 C132,140 132,195 126,236 L142,236 C158,236 166,222 164,205 C158,160 155,120 156,85 C158,42 140,10 100,10 Z" fill="${cOuter}"/><rect x="34" y="10" width="132" height="226" fill="url(#cloth-texture)" />
+                <path d="M70,60 C78,50 122,50 130,60 C130,64 126,66 120,63 C108,58 92,58 80,63 C74,66 70,64 70,60 Z" fill="${cInner}"/>
+            `;
+            break;
+        case "skullcap":
+            markup = `<path d="M72,32 C72,18 84,10 100,10 C116,10 128,18 128,32 C128,36 125,38 121,37 C121,26 112,20 100,20 C88,20 79,26 79,37 C75,38 72,36 72,32 Z" fill="${cOuter}"/>`;
+            break;
+        case "headscarf":
+            markup = `
+                <path d="M100,12 C65,12 46,38 47,72 C48,100 44,130 40,160 C38,175 46,186 60,186 C58,150 60,110 66,80 C70,55 82,38 100,36 C118,38 130,55 134,80 C140,110 142,150 140,186 C154,186 162,175 160,160 C156,130 152,100 153,72 C154,38 135,12 100,12 Z" fill="${cOuter}"/><rect x="38" y="12" width="124" height="174" fill="url(#cloth-texture)" />
+                <path d="M64,66 C76,58 124,58 136,66 C136,71 131,73 124,69 C110,63 90,63 76,69 C69,73 64,71 64,66 Z" fill="${cInner}"/>
+            `;
+            break;
+        case "helmet":
+            markup = `
+                <g fill="#666666">
+                    <path d="M62,50 C62,20 78,8 100,8 C122,8 138,20 138,50 L138,80 L120,80 C120,45 112,28 100,28 C88,28 80,45 80,80 L62,80 Z"/>
+                    <rect x="58" y="8" width="84" height="80" fill="url(#metal-texture)"/>
+                </g>
+                <path d="M96,4 C90,4 86,8 86,60 L98,60 C99,40 99,20 100,4 Z" fill="#444444"/><path d="M96,4 C90,4 86,8 86,60 L98,60 C99,40 99,20 100,4 Z" fill="url(#metal-texture)"/>
+                <path d="M102,4 C108,4 112,8 112,60 L100,60 C99,40 99,20 100,4 Z" fill="#444444"/><path d="M102,4 C108,4 112,8 112,60 L100,60 C99,40 99,20 100,4 Z" fill="url(#metal-texture)"/>
+                <path d="M60,78 L140,78 L140,88 L60,88 Z" fill="#555555"/><path d="M60,78 L140,78 L140,88 L60,88 Z" fill="url(#metal-texture)"/>
+                <path d="M60,50 L58,86 L68,86 L70,52 Z" fill="#555555"/><path d="M60,50 L58,86 L68,86 L70,52 Z" fill="url(#metal-texture)"/>
+                <path d="M140,50 L142,86 L132,86 L130,52 Z" fill="#555555"/><path d="M140,50 L142,86 L132,86 L130,52 Z" fill="url(#metal-texture)"/>
+                <path d="M92,2 C92,-10 108,-10 108,2 L108,12 L92,12 Z" fill="${cOuter}"/><path d="M92,2 C92,-10 108,-10 108,2 L108,12 L92,12 Z" fill="url(#cloth-texture)"/>
+            `;
+            break;
+        case "veil":
+            markup = `<path d="M100,12Q62,12 48,52L42,177Q40,193 58,201L69,197Q63,137 67,81Q70,50 100,34Q130,50 133,81Q137,137 131,197L142,201Q160,193 158,177L152,52Q138,12 100,12Z" fill="${cOuter}" opacity=".88"/><path d="M60,58Q100,40 140,58" fill="none" stroke="${cInner}" stroke-width="6"/><rect x="40" y="12" width="120" height="190" fill="url(#cloth-texture)" opacity=".55"/>`;
+            break;
+        case "wrapped_scarf":
+            markup = `<path d="M52,61Q52,18 100,12Q148,18 148,61Q134,44 100,39Q66,44 52,61Z" fill="${cOuter}"/><path d="M55,39Q100,20 145,39M58,52Q100,34 142,52" fill="none" stroke="${cInner}" stroke-width="7"/><path d="M135,47Q155,91 146,145L129,139Q139,88 125,55Z" fill="${cOuter}"/><rect x="50" y="10" width="106" height="138" fill="url(#cloth-texture)" opacity=".5"/>`;
+            break;
+        case "shepherd_wrap":
+            markup = `<path d="M58,54Q61,20 100,16Q139,20 142,54Q126,39 100,38Q74,39 58,54Z" fill="${cOuter}"/><path d="M59,47Q100,30 141,47" fill="none" stroke="${cInner}" stroke-width="8"/><path d="M62,45L48,117L64,125L79,52Z" fill="${cOuter}"/><rect x="48" y="14" width="96" height="112" fill="url(#cloth-texture)" opacity=".5"/>`;
+            break;
+        case "nepali_topi":
+            markup = `<path d="M58,58L66,17Q98,7 136,21L145,58Q102,48 58,58Z" fill="${cOuter}"/><path d="M66,17Q98,7 136,21L132,31Q99,20 64,30Z" fill="${cInner}"/><path d="M60,47Q102,37 143,47V58Q102,48 58,58Z" fill="${cInner}" opacity=".75"/><path d="M66,17Q98,7 136,21L145,58Q102,48 58,58Z" fill="url(#cloth-texture)"/>`;
+            break;
+        case "nepali_headshawl":
+            markup = `<path d="M100,13Q61,13 48,54L45,118Q43,157 36,192Q48,204 62,193L68,88Q72,49 100,38Q128,49 132,88L138,193Q152,204 164,192Q157,157 155,118L152,54Q139,13 100,13Z" fill="${cOuter}"/><path d="M62,62Q78,49 100,48Q122,49 138,62L134,74Q118,61 100,60Q82,61 66,74Z" fill="${cInner}"/><path d="M45,118Q100,93 155,118V134Q100,108 45,134Z" fill="url(#cloth-texture)"/>`;
+            break;
+        case "royal_diadem":
+            markup = `<path d="M58,54L64,25L82,40L100,15L118,40L136,25L142,54Z" fill="${cOuter}" stroke="${cInner}" stroke-width="3"/><path d="M62,50H138" stroke="${cInner}" stroke-width="8"/><circle cx="100" cy="35" r="6" fill="url(#metal-texture)"/>`;
+            break;
+        case "pharaoh_crown":
+            markup = `<path d="M61,69Q57,26 75,10H125Q143,26 139,69L124,58Q117,38 100,34Q83,38 76,58Z" fill="${cOuter}"/><path d="M75,10H125L117,29H83Z" fill="${cInner}"/><path d="M100,9Q94,-5 100,-12Q106,-5 100,9" fill="none" stroke="${cInner}" stroke-width="5"/><rect x="59" y="8" width="82" height="63" fill="url(#cloth-texture)" opacity=".45"/>`;
+            break;
+        case "battle_helmet":
+            markup = `<path d="M57,72Q55,20 100,8Q145,20 143,72L126,66Q121,34 100,29Q79,34 74,66Z" fill="#8b6330" stroke="${cInner}" stroke-width="3"/><path d="M51,68H149V80H51Z" fill="${cOuter}"/><path d="M100,7Q86,-7 82,-18Q100,-12 118,-18Q114,-7 100,7Z" fill="${cOuter}"/><rect x="55" y="7" width="90" height="74" fill="url(#metal-texture)" opacity=".7"/>`;
+            break;
+        default: markup = "";
+    }
+    const hatScaled = hatSize !== 1.0 ? `<g transform="translate(100,30) scale(${hatSize}) translate(-100,-30)">${markup}</g>` : markup;
+    return scaleWithHead(hatScaled, headSize);
+}
+
+
+/* ---------- HEALTH STATE ----------
+   Visual storytelling only: TB is represented by fatigue/unwellness rather than
+   exaggerated or stigmatizing features. Diagnosis should come from story text. */
+function healthMarkup(state, colorSkin) {
+    if (state === "tb_unwell") {
+        const shadow = shadeColor(colorSkin, -38);
+        return `<ellipse cx="76" cy="119" rx="13" ry="5" fill="${shadow}" opacity=".16"/><ellipse cx="124" cy="119" rx="13" ry="5" fill="${shadow}" opacity=".16"/><ellipse cx="74" cy="108" rx="11" ry="4" fill="${shadow}" opacity=".18"/><ellipse cx="126" cy="108" rx="11" ry="4" fill="${shadow}" opacity=".18"/><ellipse cx="78" cy="135" rx="5" ry="1.3" fill="${shadow}" opacity=".22"/><ellipse cx="122" cy="135" rx="5" ry="1.3" fill="${shadow}" opacity=".22"/>`;
+    }
+    if (state === "recovering") return `<ellipse cx="100" cy="151" rx="22" ry="5" fill="${shadeColor(colorSkin,-20)}" opacity=".08"/>`;
+    return "";
+}
+
+function buildSVG(s) {
+    const hatInner = s.hatMatchHair ? s.colorHair : s.colorInner;
+    const hatOuter = s.hatMatchHair ? s.colorHair : s.colorOuter;
+    // Put the selected marks directly in the garment pattern. A pattern that
+    // fills itself from another pattern is rendered inconsistently by browsers.
+    const clothPatternBodies = {
+      plain: `<rect width="14" height="14" fill="transparent"/>`,
+      woven_linen: `<path d="M0 0H8M0 4H8M0 0V8M4 0V8" stroke="#fff" stroke-width=".65" opacity=".38"/><path d="M0 2H8M0 6H8M2 0V8M6 0V8" stroke="#1a100a" stroke-width=".65" opacity=".38"/>`,
+      fine_linen: `<path d="M0 1H6M0 4H6M1 0V6M4 0V6" stroke="#fff" stroke-width=".65" opacity=".38"/><path d="M0 2.5H6M2.5 0V6" stroke="#1a100a" stroke-width=".5" opacity=".32"/>`,
+      herringbone: `<path d="M0 0L6 4L12 0M0 8L6 4L12 8" fill="none" stroke="#fff" stroke-width="1.8" opacity=".38"/><path d="M0 1L6 5L12 1M0 7L6 3L12 7" fill="none" stroke="#1a100a" stroke-width=".8" opacity=".38"/>`,
+      basket_weave: `<path d="M0 2H12M0 8H12M2 0V12M8 0V12" stroke="#fff" stroke-width="2.4" opacity=".34"/><path d="M0 5H12M0 11H12M5 0V12M11 0V12" stroke="#1a100a" stroke-width="1.3" opacity=".38"/>`,
+      dotted: `<circle cx="2.5" cy="2.5" r="1.25" fill="#fff" opacity=".32"/><circle cx="7.5" cy="7.5" r="1.25" fill="#24170f" opacity=".24"/>`,
+      tartan: `<path d="M0 3H14M0 10H14M3 0V14M10 0V14" stroke="#1a100a" stroke-width="2.2" opacity=".42"/><path d="M0 6H14M6 0V14" stroke="#fff" stroke-width="1.4" opacity=".42"/>`,
+      scales: `<path d="M0 0Q3 6 6 0Q9 6 12 0M-6 8Q-3 2 0 8Q3 2 6 8Q9 2 12 8" fill="none" stroke="#fff" stroke-width="1.8" opacity=".42"/><path d="M0 1Q3 7 6 1Q9 7 12 1" fill="none" stroke="#1a100a" stroke-width=".8" opacity=".42"/>`
+    };
+    const clothPatternSizes = { fine_linen: 6, dotted: 10, herringbone: 12, basket_weave: 12, tartan: 14, scales: 12 };
+    const selectedMaterial = Object.hasOwn(clothPatternBodies, s.materialStyle) ? s.materialStyle : "woven_linen";
+    const clothPatternWidth = clothPatternSizes[selectedMaterial] || 8;
+    const clothPatternHeight = selectedMaterial === "herringbone" || selectedMaterial === "scales" ? 8 : clothPatternWidth;
+    const materialDefs = `
+      <defs>
+        <pattern id="tex-plain" patternUnits="userSpaceOnUse" width="8" height="8"><rect width="8" height="8" fill="transparent"/></pattern>
+        <pattern id="tex-woven_linen" patternUnits="userSpaceOnUse" width="8" height="8"><path d="M0 0H8M0 2H8M0 4H8M0 6H8M0 0V8M2 0V8M4 0V8M6 0V8" stroke="#000" stroke-width=".45" opacity=".13"/></pattern>
+        <pattern id="tex-fine_linen" patternUnits="userSpaceOnUse" width="5" height="5"><path d="M0 1H5M1 0V5" stroke="#fff" stroke-width=".35" opacity=".14"/><path d="M0 4H5M4 0V5" stroke="#000" stroke-width=".3" opacity=".08"/></pattern>
+        <pattern id="tex-herringbone" patternUnits="userSpaceOnUse" width="12" height="8"><path d="M0 0L6 4L12 0M0 8L6 4L12 8" fill="none" stroke="#000" stroke-width="1" opacity=".16"/></pattern>
+        <pattern id="tex-basket_weave" patternUnits="userSpaceOnUse" width="12" height="12"><path d="M0 2H12M0 8H12M2 0V12M8 0V12" stroke="#000" stroke-width="2" opacity=".13"/></pattern>
+        <pattern id="tex-dotted" patternUnits="userSpaceOnUse" width="10" height="10"><circle cx="2.5" cy="2.5" r="1.2" fill="#fff" opacity=".2"/><circle cx="7.5" cy="7.5" r="1.2" fill="#000" opacity=".12"/></pattern>
+        <pattern id="tex-tartan" patternUnits="userSpaceOnUse" width="14" height="14"><path d="M0 3H14M0 10H14M3 0V14M10 0V14" stroke="#000" stroke-width="2" opacity=".14"/><path d="M0 6H14M6 0V14" stroke="#fff" stroke-width="1" opacity=".12"/></pattern>
+        <pattern id="tex-scales" patternUnits="userSpaceOnUse" width="12" height="8"><path d="M0 0Q3 6 6 0Q9 6 12 0M-6 8Q-3 2 0 8Q3 2 6 8Q9 2 12 8" fill="none" stroke="#000" stroke-width="1" opacity=".2"/></pattern>
+        <!-- Selected material is embedded directly for reliable browser/export rendering. -->
+        <pattern id="cloth-texture" patternUnits="userSpaceOnUse" width="${clothPatternWidth}" height="${clothPatternHeight}">
+          ${clothPatternBodies[selectedMaterial]}
+        </pattern>
+        <!-- A hammered or burnished metal texture. -->
+        <pattern id="metal-texture" patternUnits="userSpaceOnUse" width="20" height="20">
+           <rect width="20" height="20" fill="transparent" />
+           <circle cx="5" cy="5" r="1.5" fill="#fff" opacity="0.08" />
+           <circle cx="15" cy="15" r="2" fill="#fff" opacity="0.05" />
+           <circle cx="10" cy="8" r="1" fill="#000" opacity="0.05" />
+           <circle cx="3" cy="18" r="1.2" fill="#000" opacity="0.06" />
+        </pattern>
+      </defs>
+    `;
+
+    // We'll create textured fills for our main materials.
+    const fill_inner = `fill="${s.colorInner}"`;
+    const fill_outer = `fill="${s.colorOuter}"`;
+    const fill_cloak = `fill="${s.colorCloak}"`;
+    const fill_accent_metal = `fill="${s.colorAccent}"`;
+
+    return [
+        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" width="100%" height="100%">`,
+        materialDefs,
+        anatomyBase(s.colorSkin),
+        wardrobeMarkup(s.clothingType, s.colorInner, s.colorOuter, s.colorCloak, s.colorAccent),
+        garmentStripeMarkup(s.dualStripe, s.colorGarment2),
+        earMarkup(s.colorSkin, s.earSize, s.earShape, s.headSize),
+        hairBackMarkup(s.hairStyle, s.colorHair, s.headSize, s.hairSize),
+        faceMarkup(s.faceShape, s.foreheadHeight, s.colorSkin, s.headSize),
+        chinMarkup(s.chinShape, s.colorSkin, s.headSize),
+        beardMarkup(s.beardStyle, s.colorHair, s.headSize),
+        mouthMarkup(s.mouthStyle, s.colorLip),
+        noseMarkup(s.noseShape, s.noseScale, s.colorSkin),
+        eyebrowMarkup(s.eyebrowStyle, s.colorHair),
+        eyeMarkup(s.eyeShape, s.eyeSpacing, s.colorEye, shadeColor(s.colorSkin, -30)),
+        healthMarkup(s.healthState || "well", s.colorSkin),
+        hairFrontMarkup(s.hairStyle, s.colorHair, s.headSize, s.hairSize),
+        hatMarkup(s.hatStyle, hatInner, hatOuter, s.headSize, s.hatSize),
+        `</svg>`
+    ].join("");
+}
+
+/* ==========================================================
+   APPLICATION STATE & PRESETS
+   Presets now live in an external character_presets.js file (loaded via
+   a <script> tag above, not fetch — this way it works when the HTML is
+   opened directly by double-clicking, no local server required).
+   Add, remove, or tweak characters by editing that file — no changes to
+   this script are needed.
+   ========================================================== */
+let presets = {};
+
+// Minimal built-in fallback, used only if character_presets.js fails to
+// load (for example if this file is opened directly as file:// — some
+// browsers block fetch() of local files under that protocol; serving the
+// folder from a local web server avoids it, e.g. `python -m http.server`).
+// This keeps the tool usable and shows a clear on-screen warning rather
+// than failing silently.
+const FALLBACK_PRESET = {
+    name: "Custom Character", healthState: "well",
+    noseScale: 1.0, noseShape: "straight",
+    eyeShape: "almond", eyeSpacing: 1.0,
+    eyebrowStyle: "arched", mouthStyle: "neutral",
+    hairStyle: "short", beardStyle: "none", hatStyle: "none",
+    clothingType: "tunic", materialStyle: "woven_linen",
+    faceShape: "oval", foreheadHeight: "medium", chinShape: "rounded",
+    earSize: 1.0, earShape: "round", headSize: 1.0, hairSize: 1.0, hatSize: 1.0,
+    hatMatchHair: false,
+    dualStripe: false,
+    colorInner: "#4a423a", colorOuter: "#2f2b25", colorCloak: "#1a1815",
+    colorAccent: "#3b3831", colorGarment2: "#8a7a5a",
+    colorSkin: "#c49366", colorHair: "#241c14", colorEye: "#4a3b32", colorLip: "#9a5f52"
+};
+
+let state = { ...FALLBACK_PRESET };
+
+function loadPresets() {
+    if (typeof CHARACTER_PRESETS_DATA !== "undefined" && CHARACTER_PRESETS_DATA && Object.keys(CHARACTER_PRESETS_DATA).length) {
+        presets = CHARACTER_PRESETS_DATA;
+        populatePresetSelect();
+        const firstKey = (typeof CHARACTER_PRESETS_META !== "undefined" && CHARACTER_PRESETS_META.defaultPreset) || Object.keys(presets)[0];
+        state = { hairSize: 1.0, hatSize: 1.0, hatMatchHair: false, ...presets[firstKey] };
+        hidePresetError();
+    } else {
+        console.error("CHARACTER_PRESETS_DATA not found — character_presets.js did not load.");
+        showPresetError();
+    }
+    writeStateIntoUI();
+    render();
+}
+
+function populatePresetSelect() {
+    const select = document.getElementById("characterPresetSelect");
+    select.innerHTML = '<option value="">-- Select --</option>';
+
+    const groups = {
+      "story": { label: (typeof CHARACTER_PRESETS_META !== "undefined" ? CHARACTER_PRESETS_META.groupLabel : "Story characters"), characters: Object.keys(presets) }
+    };
+
+    Object.values(groups).forEach(group => {
+        const optgroup = document.createElement("optgroup");
+        optgroup.label = group.label;
+        group.characters.forEach(key => {
+            if (presets[key]) {
+                const option = document.createElement("option");
+                option.value = key;
+                option.textContent = presets[key].name;
+                optgroup.appendChild(option);
+            }
+        });
+        select.appendChild(optgroup);
+    });
+}
+
+function showPresetError() {
+    const el = document.getElementById("preset-status");
+    if (el) {
+        el.style.display = "block";
+        el.textContent = "Couldn't find character_presets.js — make sure it's saved in the same folder as this HTML file (and hasn't been renamed). Using one default character for now.";
+    }
+}
+function hidePresetError() {
+    const el = document.getElementById("preset-status");
+    if (el) el.style.display = "none";
+}
+
+/* ==========================================================
+   UI CONTROLLER
+   ========================================================== */
+const ids = ["health-state:healthState","face-shape:faceShape","forehead-height:foreheadHeight","eye-spacing:eyeSpacing","ear-size:earSize","head-size:headSize","hair-size:hairSize","hat-size:hatSize","chin-shape:chinShape","eye-shape:eyeShape","eyebrow-style:eyebrowStyle","nose-shape:noseShape","mouth-style:mouthStyle","hair-style:hairStyle","beard-style:beardStyle","hat-style:hatStyle","clothing-type:clothingType","material-style:materialStyle","ear-shape:earShape"];
+const colorIds = ["color-inner:colorInner","color-outer:colorOuter","color-cloak:colorCloak","color-accent:colorAccent","color-skin:colorSkin","color-hair:colorHair","color-eye:colorEye","color-lip:colorLip","color-garment2:colorGarment2"];
+
+function formatName(str) { return str.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase()); }
+function slugify(str) { return str.toLowerCase().trim().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "") || "custom_character"; }
+
+function render() {
+    document.getElementById("svg-container").innerHTML = buildSVG(state);
+    document.getElementById("caption-name").textContent = formatName(state.name);
+    document.getElementById("caption-sub").textContent = slugify(state.name) + ".svg";
+}
+
+function readUIIntoState() {
+    ids.forEach(p => { const [id, k] = p.split(":"); state[k] = document.getElementById(id).value; });
+    colorIds.forEach(p => { const [id, k] = p.split(":"); state[k] = document.getElementById(id).value; });
+    state.noseScale = parseFloat(document.getElementById("nose-scale").value);
+    state.eyeSpacing = parseFloat(document.getElementById("eye-spacing").value);
+    state.earSize = parseFloat(document.getElementById("ear-size").value);
+    state.headSize = parseFloat(document.getElementById("head-size").value);
+    state.hairSize = parseFloat(document.getElementById("hair-size").value);
+    state.hatSize = parseFloat(document.getElementById("hat-size").value);
+    state.hatMatchHair = document.getElementById("hat-match-hair").checked;
+    state.dualStripe = document.getElementById("dual-stripe").checked;
+    document.getElementById("nose-scale-val").textContent = state.noseScale.toFixed(2) + "×";
+    document.getElementById("eye-spacing-val").textContent = state.eyeSpacing.toFixed(1) + "×";
+    document.getElementById("ear-size-val").textContent = state.earSize.toFixed(1) + "×";
+    document.getElementById("head-size-val").textContent = state.headSize.toFixed(1) + "×";
+    document.getElementById("hair-size-val").textContent = state.hairSize.toFixed(1) + "×";
+    document.getElementById("hat-size-val").textContent = state.hatSize.toFixed(1) + "×";
+    document.getElementById("stripe-row").style.display = state.dualStripe ? "flex" : "none";
+    state.name = "Custom Character";
+    render();
+}
+
+function writeStateIntoUI() {
+    ids.forEach(p => { const [id, k] = p.split(":"); document.getElementById(id).value = state[k]; });
+    colorIds.forEach(p => { const [id, k] = p.split(":"); document.getElementById(id).value = state[k]; });
+    document.getElementById("nose-scale").value = state.noseScale;
+    document.getElementById("nose-scale-val").textContent = state.noseScale.toFixed(2) + "×";
+    document.getElementById("eye-spacing").value = state.eyeSpacing;
+    document.getElementById("eye-spacing-val").textContent = state.eyeSpacing.toFixed(1) + "×";
+    document.getElementById("ear-size").value = state.earSize;
+    document.getElementById("ear-size-val").textContent = state.earSize.toFixed(1) + "×";
+    document.getElementById("head-size").value = state.headSize;
+    document.getElementById("head-size-val").textContent = state.headSize.toFixed(1) + "×";
+    document.getElementById("hair-size").value = state.hairSize;
+    document.getElementById("hair-size-val").textContent = state.hairSize.toFixed(1) + "×";
+    document.getElementById("hat-size").value = state.hatSize;
+    document.getElementById("hat-size-val").textContent = state.hatSize.toFixed(1) + "×";
+    document.getElementById("hat-match-hair").checked = !!state.hatMatchHair;
+    document.getElementById("dual-stripe").checked = !!state.dualStripe;
+    document.getElementById("stripe-row").style.display = state.dualStripe ? "flex" : "none";
+}
+
+const presetSelect = document.getElementById("characterPresetSelect");
+
+document.getElementById("load-preset").addEventListener("click", () => {
+    const key = presetSelect.value;
+    if (presets[key]) { state = { hairSize: 1.0, hatSize: 1.0, hatMatchHair: false, ...presets[key] }; writeStateIntoUI(); render(); }
+});
+
+document.querySelectorAll(".sidebar input, .sidebar select").forEach(el => {
+    if(el.id !== "characterPresetSelect") el.addEventListener("input", readUIIntoState);
+});
+
+/* ==========================================================
+   EXPORTS
+   ========================================================== */
+function triggerDownload(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+document.getElementById("export-svg").addEventListener("click", () => {
+    const blob = new Blob(['<?xml version="1.0" encoding="UTF-8"?>\n' + buildSVG(state)], { type:"image/svg+xml;charset=utf-8" });
+    triggerDownload(blob, slugify(state.name) + ".svg");
+});
+
+document.getElementById("export-json").addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type:"application/json" });
+    triggerDownload(blob, slugify(state.name) + ".json");
+});
+
+document.getElementById("export-batch").addEventListener("click", async () => {
+    const btn = document.getElementById("export-batch");
+    const orig = btn.textContent;
+    btn.textContent = "Preparing…"; btn.disabled = true;
+    try {
+        if(typeof JSZip === "undefined") throw new Error("JSZip unavailable");
+        const zip = new JSZip();
+        Object.entries(presets).forEach(([key, preset]) => {
+            zip.file(`${key}.svg`, '<?xml version="1.0" encoding="UTF-8"?>\n' + buildSVG(preset));
+            zip.file(`${key}.json`, JSON.stringify(preset, null, 2));
+        });
+        const blob = await zip.generateAsync({ type:"blob" });
+        triggerDownload(blob, "nepalese_character_profiles.zip");
+    } catch(err) {
+        Object.entries(presets).forEach(([key, preset], i) => {
+            setTimeout(() => {
+                triggerDownload(new Blob([JSON.stringify(preset, null, 2)], { type:"application/json" }), `${key}.json`);
+            }, i * 300);
+        });
+    } finally {
+        setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 500);
+    }
+});
+
+/* Initialize */
+loadPresets();
+</script>
+</body>
+</html>

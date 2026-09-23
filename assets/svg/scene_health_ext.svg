@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <defs>
+    <linearGradient id="g04sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8AC6FF"/>
+      <stop offset="100%" stop-color="#FFE9B8"/>
+    </linearGradient>
+    <radialGradient id="g04cloud" cx="50%" cy="28%" r="42%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.65"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="g04field" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#C7E9A6"/>
+      <stop offset="100%" stop-color="#97C974"/>
+    </linearGradient>
+    <linearGradient id="g04wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F5E6CB"/>
+      <stop offset="100%" stop-color="#D7C7A5"/>
+    </linearGradient>
+    <linearGradient id="g04roof" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#AA4C36"/>
+      <stop offset="100%" stop-color="#7E311B"/>
+    </linearGradient>
+    <linearGradient id="g04soil" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E5C987"/>
+      <stop offset="100%" stop-color="#B4954A"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="0" y="0" width="1920" height="1080" fill="url(#g04sky)"/>
+
+  <g id="clouds">
+    <ellipse cx="300" cy="130" rx="80" ry="30" fill="url(#g04cloud)"/>
+    <ellipse cx="780" cy="150" rx="100" ry="34" fill="url(#g04cloud)"/>
+    <ellipse cx="1320" cy="120" rx="74" ry="28" fill="url(#g04cloud)"/>
+  </g>
+
+  <path d="M0,510 Q400,480 960,495 Q1500,475 1920,500 L1920,560 Q1500,540 960,560 Q400,540 0,540 Z" fill="url(#g04field)" opacity="0.95"/>
+
+  <g id="path">
+    <path d="M900,560 C960,555 1020,555 1080,560 L1060,640 C1000,645 940,645 900,638 Z" fill="url(#g04soil)"/>
+    <path d="M1080,560 C1100,562 1120,562 1140,560 L1120,638 C1080,640 1100,642 1140,638" fill="url(#g04soil)"/>
+  </g>
+
+  <g id="health-post" transform="translate(960,470)">
+    <rect x="-150" y="0" width="300" height="170" fill="url(#g04wall)"/>
+    <rect x="-150" y="0" width="300" height="22" fill="url(#g04roof)"/>
+    <rect x="-150" y="120" width="300" height="50" fill="#3A6B9E" opacity="0.45"/>
+    <rect x="-34" y="18" width="68" height="84" fill="#3A6B9E" opacity="0.55"/>
+    <rect x="-26" y="26" width="52" height="68" fill="#2E5589"/>
+
+    <g id="cross" transform="translate(10,30)">
+      <rect x="-28" y="-60" width="56" height="120" fill="#D83A3A"/>
+      <rect x="-72" y="-30" width="144" height="60" fill="#D83A3A"/>
+      <rect x="-28" y="-60" width="56" height="16" fill="#FFFFFF" opacity="0.35"/>
+      <rect x="-72" y="14" width="144" height="16" fill="#FFFFFF" opacity="0.35"/>
+    </g>
+
+    <g id="veranda">
+      <rect x="-140" y="170" width="280" height="40" fill="#A58A6F"/>
+      <line x1="-140" y1="190" x2="140" y2="190" stroke="#8A6B4A" stroke-width="2"/>
+      <rect x="-130" y="178" width="260" height="2" fill="#FFFFFF" opacity="0.4"/>
+    </g>
+
+    <g id="bench">
+      <rect x="-90" y="188" width="60" height="14" fill="#6B4226"/>
+      <rect x="-90" y="200" width="60" height="8" fill="#6B4226"/>
+      <rect x="-82" y="188" width="46" height="1" fill="#8D5A2B"/>
+    </g>
+    <g id="bench2">
+      <rect x="30" y="188" width="60" height="14" fill="#6B4226"/>
+      <rect x="30" y="200" width="60" height="8" fill="#6B4226"/>
+    </g>
+
+    <g id="info-board">
+      <rect x="-8" y="-4" width="76" height="34" fill="#4A341D"/>
+      <rect x="-4" y="0" width="66" height="24" fill="#E8DCC9"/>
+      <rect x="-4" y="22" width="66" height="2" fill="#A58A6F"/>
+    </g>
+  </g>
+
+  <g id="bike-rack">
+    <rect x="760" y="530" width="14" height="30" fill="#5A6B7A"/>
+    <circle cx="767" cy="524" r="6" fill="#5A6B7A"/>
+    <circle cx="775" cy="538" r="6" fill="#5A6B7A"/>
+  </g>
+
+  <g id="mango-tree">
+    <circle cx="640" cy="350" r="36" fill="#4CAF50" opacity="0.85"/>
+    <circle cx="630" cy="340" r="36" fill="#4CAF50" opacity="0.75"/>
+    <path d="M640,380 C680,400 700,440 680,470 C620,460 580,440 600,400 C600,390 610,380 640,380 Z" fill="#2E7D32"/>
+    <rect x="628" y="390" width="14" height="80" fill="#6B4226"/>
+  </g>
+
+  <g id="ground-shadow">
+    <rect x="0" y="610" width="1920" height="470" fill="#3B2A1A" opacity="0.18"/>
+  </g>
+</svg>

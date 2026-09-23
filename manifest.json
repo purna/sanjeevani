@@ -1,0 +1,11 @@
+{
+  "name": "Interactive Bible Story Template",
+  "short_name": "Story Template",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#101927",
+  "theme_color": "#c87a30",
+  "icons": [],
+  "assetFolder": "template",
+  "assetStem": "template"
+}

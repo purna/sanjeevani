@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <defs>
+    <linearGradient id="g05wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F7EFE4"/>
+      <stop offset="100%" stop-color="#E3D5C0"/>
+    </linearGradient>
+    <linearGradient id="g05floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F5E9DA"/>
+      <stop offset="100%" stop-color="#E3D5BF"/>
+    </linearGradient>
+    <linearGradient id="g05window" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#B3DFF5"/>
+      <stop offset="100%" stop-color="#4A9BB8"/>
+    </linearGradient>
+    <linearGradient id="g05tab" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#D7C7A5"/>
+    </linearGradient>
+    <linearGradient id="g05shelf" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#8B6B3A"/>
+      <stop offset="100%" stop-color="#6B4226"/>
+    </linearGradient>
+    <linearGradient id="g05box" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4A9BB8"/>
+      <stop offset="100%" stop-color="#2E7A9B"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="0" y="0" width="1920" height="1080" fill="url(#g05wall)"/>
+
+  <g id="floor">
+    <rect x="0" y="620" width="1920" height="460" fill="url(#g05floor)"/>
+    <path d="M0,640 C120,620 400,630 760,620 C1180,610 1560,630 1920,620 L1920,1080 L0,1080 C0,760 0,660 0,640 Z" fill="#3B2A1A" opacity="0.08"/>
+  </g>
+
+  <g id="back-wall">
+    <rect x="0" y="120" width="1920" height="500" fill="url(#g05wall)"/>
+    <rect x="0" y="560" width="1920" height="60" fill="#5DAA57" opacity="0.15"/>
+  </g>
+
+  <g id="window">
+    <rect x="1500" y="180" width="320" height="300" fill="url(#g05window)"/>
+    <rect x="1500" y="180" width="320" height="300" fill="#FFFFFF" opacity="0.12"/>
+    <g stroke="#8A6B4A" stroke-width="8">
+      <line x1="1660" y1="180" x2="1660" y2="480"/>
+      <line x1="1500" y1="330" x2="1820" y2="330"/>
+    </g>
+    <path d="M1500,180 L1820,180 L1820,480 L1500,480 Z" fill="none" stroke="#8A6B4A" stroke-width="4"/>
+    <g id="window-light">
+      <path d="M1500,190 L1820,190 C1810,320 1810,400 1820,470 L1500,470 C1490,400 1490,320 1500,190 Z" fill="#FFFFFF" opacity="0.35"/>
+    </g>
+  </g>
+
+  <g id="consultation-table" transform="translate(480,560)">
+    <rect x="-100" y="-40" width="200" height="40" fill="url(#g05tab)" stroke="#A6893F" stroke-width="3"/>
+    <rect x="-100" y="-36" width="200" height="4" fill="#FFFFFF" opacity="0.5"/>
+    <line x1="-80" y1="-40" x2="-80" y2="0" stroke="#A6893F"/>
+    <line x1="80" y1="-40" x2="80" y2="0" stroke="#A6893F"/>
+    <rect x="-94" y="0" width="188" height="8" fill="#444" opacity="0.3"/>
+  </g>
+
+  <g id="chairs">
+    <g transform="translate(300,560)">
+      <circle cx="0" cy="-20" r="16" fill="#5A6B7A"/>
+      <rect x="-16" y="-4" width="32" height="24" fill="#5A6B7A"/>
+      <circle cx="0" cy="20" r="16" fill="#5A6B7A"/>
+    </g>
+    <g transform="translate(780,560)">
+      <circle cx="0" cy="-20" r="16" fill="#5A6B7A"/>
+      <rect x="-16" y="-4" width="32" height="24" fill="#5A6B7A"/>
+      <circle cx="0" cy="20" r="16" fill="#5A6B7A"/>
+    </g>
+  </g>
+
+  <g id="testing-corner" transform="translate(1180,620)">
+    <rect x="-120" y="-120" width="240" height="120" fill="#F0F4F8" stroke="#A0B0C0" stroke-width="4"/>
+    <rect x="-110" y="-110" width="220" height="100" fill="#FFFFFF"/>
+    <rect x="-110" y="-106" width="220" height="14" fill="#D0E0EA"/>
+    <g id="machine">
+      <rect x="-30" y="-80" width="60" height="60" fill="#4A9BB8" rx="8"/>
+      <rect x="-20" y="-70" width="40" height="16" fill="#2E7A9B"/>
+      <rect x="-30" y="-30" width="60" height="16" fill="#2E7A9B"/>
+      <rect x="-30" y="-14" width="60" height="14" fill="#2E7A9B" rx="4"/>
+      <circle cx="18" cy="-78" r="5" fill="#FFB400"/>
+    </g>
+    <g id="sputum-cup">
+      <rect x="50" y="-70" width="22" height="42" fill="#FFFFFF" stroke="#9AA6B2" stroke-width="2" rx="11"/>
+      <path d="M61,52 Q61,62 50,62" fill="#9AA6B2"/>
+    </g>
+    <g id="label">
+      <rect x="-20" y="6" width="100" height="18" fill="#E8DCC9" stroke="#A6893F"/>
+      <rect x="50" y="16" width="22" height="4" fill="#A6893F" opacity="0.3"/>
+    </g>
+  </g>
+
+  <g id="shelf" transform="translate(160,440)">
+    <rect x="-340" y="0" width="680" height="22" fill="url(#g05shelf)"/>
+    <g stroke="#444" stroke-width="2">
+      <line x1="-320" y1="0" x2="-320" y2="20"/>
+      <line x1="-220" y1="0" x2="-220" y2="20"/>
+      <line x1="-120" y1="0" x2="-120" y2="20"/>
+      <line x1="-20" y1="0" x2="-20" y2="20"/>
+      <line x1="80" y1="0" x2="80" y2="20"/>
+      <line x1="180" y1="0" x2="180" y2="20"/>
+      <line x1="280" y1="0" x2="280" y2="20"/>
+    </g>
+    <g id="supplies">
+      <rect x="-310" y="4" width="56" height="16" fill="#4A9BB8" rx="3"/>
+      <rect x="-290" y="6" width="30" height="10" fill="#FFFFFF" opacity="0.6"/>
+      <rect x="-200" y="4" width="56" height="16" fill="#D83A3A" rx="3"/>
+      <rect x="-170" y="6" width="26" height="10" fill="#FFFFFF" opacity="0.6"/>
+      <rect x="-80" y="4" width="56" height="16" fill="#4CAF50" rx="3"/>
+      <rect x="-50" y="6" width="26" height="10" fill="#FFFFFF" opacity="0.6"/>
+      <rect x="100" y="4" width="56" height="16" fill="#8E24AA" rx="3"/>
+      <rect x="130" y="6" width="26" height="10" fill="#FFFFFF" opacity="0.6"/>
+      <rect x="220" y="4" width="56" height="16" fill="#FFB400" rx="3"/>
+    </g>
+  </g>
+
+  <g id="shelf-bottom" transform="translate(160,530)">
+    <rect x="-340" y="0" width="680" height="16" fill="url(#g05shelf)"/>
+    <rect x="0" y="2" width="220" height="12" fill="#E8DCC9" rx="3"/>
+  </g>
+
+  <g id="floor-box">
+    <rect x="80" y="720" width="90" height="60" fill="url(#g05box)" rx="6"/>
+    <rect x="80" y="730" width="90" height="8" fill="#FFFFFF" opacity="0.4"/>
+  </g>
+
+  <g id="small-plant">
+    <rect x="20" y="720" width="20" height="28" fill="#6B4226"/>
+    <circle cx="30" cy="700" r="24" fill="#3A8C42" opacity="0.85"/>
+    <ellipse cx="30" cy="690" rx="16" ry="6" fill="#3A8C42"/>
+  </g>
+
+  <g id="floor-shadow">
+    <ellipse cx="1180" cy="740" rx="150" ry="30" fill="#000000" opacity="0.06"/>
+    <ellipse cx="480" cy="580" rx="130" ry="20" fill="#000000" opacity="0.05"/>
+  </g>
+</svg>

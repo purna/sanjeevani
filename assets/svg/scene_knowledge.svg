@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <defs>
+    <radialGradient id="g07center" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#B8F2E6"/>
+      <stop offset="100%" stop-color="#FFFFFF"/>
+    </radialGradient>
+    <linearGradient id="g07horizon" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#A8E6CF"/>
+      <stop offset="55%" stop-color="#B8F2E6"/>
+      <stop offset="100%" stop-color="#D0F0E0"/>
+    </linearGradient>
+    <radialGradient id="g07glow" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#A8E6CF" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#A8E6CF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="g07glow2" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#B8D8F0" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#B8D8F0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="g07glow3" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#F6E0B2" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#F6E0B2" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect x="0" y="0" width="1920" height="1080" fill="url(#g07horizon)"/>
+
+  <g id="horizon-line">
+    <path d="M0,640 C320,620 640,640 960,630 C1280,620 1600,640 1920,625 L1920,1080 L0,1080 Z" fill="#FFFFFF" opacity="0.16"/>
+  </g>
+
+  <g id="glow-orbs">
+    <circle cx="1920" cy="280" r="180" fill="url(#g07glow)"/>
+    <circle cx="240" cy="860" r="220" fill="url(#g07glow2)"/>
+    <circle cx="1020" cy="160" r="150" fill="url(#g07glow3)"/>
+    <circle cx="1500" cy="760" r="170" fill="url(#g07glow)"/>
+  </g>
+
+  <g id="floating-forms" opacity="0.22">
+    <ellipse cx="380" cy="260" rx="48" ry="14" fill="#5DAA57"/>
+    <ellipse cx="380" cy="264" rx="48" ry="8" fill="#FFFFFF" opacity="0.6"/>
+    <ellipse cx="640" cy="460" rx="64" ry="18" fill="#3A8C42"/>
+    <ellipse cx="640" cy="464" rx="64" ry="10" fill="#FFFFFF" opacity="0.55"/>
+    <ellipse cx="1240" cy="340" rx="52" ry="16" fill="#4A9BB8"/>
+    <ellipse cx="1240" cy="344" rx="52" ry="9" fill="#FFFFFF" opacity="0.6"/>
+    <ellipse cx="1700" cy="520" rx="58" ry="17" fill="#8E24AA"/>
+    <ellipse cx="1700" cy="524" rx="58" ry="10" fill="#FFFFFF" opacity="0.55"/>
+  </g>
+
+  <g id="subtle-motifs" opacity="0.10">
+    <path d="M960,500 C1040,420 1120,420 1200,500 C1120,520 1040,520 960,500 Z" fill="#3A8C42"/>
+    <path d="M960,500 C1040,420 1120,420 1200,500 C1120,520 1040,520 960,500 Z" fill="none" stroke="#5DAA57" stroke-width="8" transform="translate(0,-60)"/>
+    <ellipse cx="420" cy="760" rx="46" ry="22" fill="#4A9BB8"/>
+    <ellipse cx="420" cy="766" rx="46" ry="12" fill="#2E7A9B"/>
+    <ellipse cx="1580" cy="700" rx="36" ry="18" fill="#8E24AA"/>
+    <path d="M1580,684 L1580,716 M1564,700 L1596,700" stroke="#FFFFFF" stroke-width="6"/>
+  </g>
+
+  <g id="particles" opacity="0.45">
+    <circle cx="120" cy="240" r="3" fill="#A8E6CF"/>
+    <circle cx="280" cy="420" r="2.5" fill="#A8E6CF"/>
+    <circle cx="520" cy="140" r="3.5" fill="#B8D8F0"/>
+    <circle cx="740" cy="720" r="3" fill="#F6E0B2"/>
+    <circle cx="1000" cy="300" r="2.5" fill="#A8E6CF"/>
+    <circle cx="1320" cy="820" r="3" fill="#B8D8F0"/>
+    <circle cx="1620" cy="220" r="3.5" fill="#F6E0B2"/>
+    <circle cx="1840" cy="540" r="2.5" fill="#A8E6CF"/>
+    <circle cx="240" cy="880" r="3" fill="#B8D8F0"/>
+    <circle cx="920" cy="860" r="2.5" fill="#F6E0B2"/>
+  </g>
+
+  <g id="ground-soft">
+    <rect x="0" y="625" width="1920" height="455" fill="#FFFFFF" opacity="0.28"/>
+    <path d="M0,640 C320,620 640,640 960,630 C1280,620 1600,640 1920,625 L1920,660 C1600,648 1280,650 960,660 C640,670 320,650 0,660 Z" fill="#E0F2F1" opacity="0.3"/>
+  </g>
+</svg>

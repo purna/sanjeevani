@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" width="100%" height="100%">
+      <defs>
+        <pattern id="tex-plain" patternUnits="userSpaceOnUse" width="8" height="8"><rect width="8" height="8" fill="transparent"/></pattern>
+        <pattern id="tex-woven_linen" patternUnits="userSpaceOnUse" width="8" height="8"><path d="M0 0H8M0 2H8M0 4H8M0 6H8M0 0V8M2 0V8M4 0V8M6 0V8" stroke="#000" stroke-width=".45" opacity=".13"/></pattern>
+        <pattern id="tex-fine_linen" patternUnits="userSpaceOnUse" width="5" height="5"><path d="M0 1H5M1 0V5" stroke="#fff" stroke-width=".35" opacity=".14"/><path d="M0 4H5M4 0V5" stroke="#000" stroke-width=".3" opacity=".08"/></pattern>
+        <pattern id="tex-herringbone" patternUnits="userSpaceOnUse" width="12" height="8"><path d="M0 0L6 4L12 0M0 8L6 4L12 8" fill="none" stroke="#000" stroke-width="1" opacity=".16"/></pattern>
+        <pattern id="tex-basket_weave" patternUnits="userSpaceOnUse" width="12" height="12"><path d="M0 2H12M0 8H12M2 0V12M8 0V12" stroke="#000" stroke-width="2" opacity=".13"/></pattern>
+        <pattern id="tex-dotted" patternUnits="userSpaceOnUse" width="10" height="10"><circle cx="2.5" cy="2.5" r="1.2" fill="#fff" opacity=".2"/><circle cx="7.5" cy="7.5" r="1.2" fill="#000" opacity=".12"/></pattern>
+        <pattern id="tex-tartan" patternUnits="userSpaceOnUse" width="14" height="14"><path d="M0 3H14M0 10H14M3 0V14M10 0V14" stroke="#000" stroke-width="2" opacity=".14"/><path d="M0 6H14M6 0V14" stroke="#fff" stroke-width="1" opacity=".12"/></pattern>
+        <pattern id="tex-scales" patternUnits="userSpaceOnUse" width="12" height="8"><path d="M0 0Q3 6 6 0Q9 6 12 0M-6 8Q-3 2 0 8Q3 2 6 8Q9 2 12 8" fill="none" stroke="#000" stroke-width="1" opacity=".2"/></pattern>
+        <!-- Selected material is embedded directly for reliable browser/export rendering. -->
+        <pattern id="cloth-texture" patternUnits="userSpaceOnUse" width="12" height="12">
+          <path d="M0 2H12M0 8H12M2 0V12M8 0V12" stroke="#fff" stroke-width="2.4" opacity=".34"/><path d="M0 5H12M0 11H12M5 0V12M11 0V12" stroke="#1a100a" stroke-width="1.3" opacity=".38"/>
+        </pattern>
+        <!-- A hammered or burnished metal texture. -->
+        <pattern id="metal-texture" patternUnits="userSpaceOnUse" width="20" height="20">
+           <rect width="20" height="20" fill="transparent" />
+           <circle cx="5" cy="5" r="1.5" fill="#fff" opacity="0.08" />
+           <circle cx="15" cy="15" r="2" fill="#fff" opacity="0.05" />
+           <circle cx="10" cy="8" r="1" fill="#000" opacity="0.05" />
+           <circle cx="3" cy="18" r="1.2" fill="#000" opacity="0.06" />
+        </pattern>
+      </defs>
+    
+        <!-- Neck -->
+        <path d="M82,145 L82,185 C90,195 110,195 118,185 L118,145 Z" fill="#996344"/>
+        <path d="M82,145 L82,165 C90,175 110,175 118,165 L118,145 Z" fill="#7b4526" opacity="0.5"/>
+        <!-- Shoulders / Base Torso -->
+        <path d="M30,240 C35,190 60,170 82,170 L118,170 C140,170 165,190 170,240 Z" fill="#996344"/>
+    <path d="M20,240Q26,180 58,163L100,183L142,163Q174,180 180,240Z" fill="#514338"/><path d="M43,240L59,167L100,191L141,167L157,240Z" fill="#bba06f"/><path d="M22,206Q62,183 100,196Q138,183 178,206V224Q139,202 100,214Q61,202 22,224Z" fill="#755441"/><path d="M22,206Q62,183 100,196Q138,183 178,206V224Q139,202 100,214Q61,202 22,224Z" fill="url(#cloth-texture)"/><g transform="translate(48,95) scale(1) translate(-48,-95)"><path d="M48,95 C42,95 34,95 34,105 C34,115 42,122 48,118 C54,122 62,115 62,105 C62,95 54,95 48,95 Z" fill="#996344"/></g><g transform="translate(152,95) scale(1) translate(-152,-95)"><path d="M152,95 C158,95 166,95 166,105 C166,115 158,122 152,118 C146,122 138,115 138,105 C138,95 146,95 152,95 Z" fill="#996344"/></g><path d="M100,25 C138,25 156,50 156,90 C156,120 154,148 146,166 C140,178 122,182 100,182 C78,182 60,178 54,166 C46,148 44,120 44,90 C44,50 62,25 100,25 Z" fill="#996344"/>
+                <path d="M86,163 L114,163 C114,174 108,183 100,185 C92,183 86,174 86,163 Z" fill="#996344"/>
+                <path d="M90,178 C94,181 106,181 110,178 C106,180.5 94,180.5 90,178 Z" fill="#7d4728" opacity="0.2"/>
+            <circle cx="72" cy="132" r="1.1" fill="#231914" opacity="0.6"/><circle cx="80" cy="138" r="1.1" fill="#231914" opacity="0.6"/><circle cx="88" cy="144" r="1.1" fill="#231914" opacity="0.6"/><circle cx="96" cy="150" r="1.1" fill="#231914" opacity="0.6"/><circle cx="104" cy="150" r="1.1" fill="#231914" opacity="0.6"/><circle cx="112" cy="144" r="1.1" fill="#231914" opacity="0.6"/><circle cx="120" cy="138" r="1.1" fill="#231914" opacity="0.6"/><circle cx="128" cy="132" r="1.1" fill="#231914" opacity="0.6"/><circle cx="76" cy="140" r="1.1" fill="#231914" opacity="0.6"/><circle cx="84" cy="146" r="1.1" fill="#231914" opacity="0.6"/><circle cx="92" cy="152" r="1.1" fill="#231914" opacity="0.6"/><circle cx="100" cy="154" r="1.1" fill="#231914" opacity="0.6"/><circle cx="108" cy="152" r="1.1" fill="#231914" opacity="0.6"/><circle cx="116" cy="146" r="1.1" fill="#231914" opacity="0.6"/><circle cx="124" cy="140" r="1.1" fill="#231914" opacity="0.6"/><circle cx="80" cy="148" r="1.1" fill="#231914" opacity="0.6"/><circle cx="90" cy="156" r="1.1" fill="#231914" opacity="0.6"/><circle cx="100" cy="159" r="1.1" fill="#231914" opacity="0.6"/><circle cx="110" cy="156" r="1.1" fill="#231914" opacity="0.6"/><circle cx="120" cy="148" r="1.1" fill="#231914" opacity="0.6"/><path d="M82,142 C90,146 110,146 118,142 C110,150 90,150 82,142 Z" fill="#9a5a50"/><g transform="translate(100,110) scale(1) translate(-100,-110)"><path d="M97,94 C94,104 89,113 87,119 C86,124 90,127 96,128 L104,128 C110,127 114,124 113,119 C111,113 106,104 103,94 Z" fill="#7d4728" opacity="0.32"/>
+        <ellipse cx="94.5" cy="122" rx="2" ry="1.4" fill="#7d4728" opacity="0.85"/>
+        <ellipse cx="105.5" cy="122" rx="2" ry="1.4" fill="#7d4728" opacity="0.85"/>
+    </g><path d="M62,80 C69,68 84,67 91,75 C84,70 69,71 62,80 Z" fill="#231914"/><g transform="translate(200,0) scale(-1,1)"><path d="M62,80 C69,68 84,67 91,75 C84,70 69,71 62,80 Z" fill="#231914"/></g><path d="M64,92 C69,85 85,85 90,92 C85,99 69,99 64,92 Z" fill="#fdfaf1"/><circle cx="77" cy="93" r="5" fill="#3b2b24"/><circle cx="77" cy="93" r="2" fill="#1a1410"/><circle cx="78.4" cy="91.6" r="1.1" fill="#ffffff"/><g transform="translate(200,0) scale(-1,1)"><path d="M64,92 C69,85 85,85 90,92 C85,99 69,99 64,92 Z" fill="#fdfaf1"/><circle cx="77" cy="93" r="5" fill="#3b2b24"/><circle cx="77" cy="93" r="2" fill="#1a1410"/><circle cx="78.4" cy="91.6" r="1.1" fill="#ffffff"/></g><path d="M100,22 C138,22 156,48 154,85 C154,70 148,58 140,52 C142,60 140,66 136,68 C132,50 112,38 100,38 C88,38 68,50 64,68 C60,66 58,60 60,52 C52,58 46,70 46,85 C44,48 62,22 100,22 Z" fill="#231914"/><path d="M58,58L66,17Q98,7 136,21L145,58Q102,48 58,58Z" fill="#755441"/><path d="M66,17Q98,7 136,21L132,31Q99,20 64,30Z" fill="#bba06f"/><path d="M60,47Q102,37 143,47V58Q102,48 58,58Z" fill="#bba06f" opacity=".75"/><path d="M66,17Q98,7 136,21L145,58Q102,48 58,58Z" fill="url(#cloth-texture)"/></svg>

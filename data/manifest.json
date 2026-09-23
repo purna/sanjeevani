@@ -1,0 +1,41 @@
+{
+  "name": "The Legend of Sanjeevani",
+  "version": "1.0.0",
+  "acts": [
+    {
+      "id": "morning",
+      "name": "Title \u00b7 Dawn",
+      "file": "en/sanjeevani_1.json",
+      "scene": "morning",
+      "foreground": "fg_interpreter"
+    },
+    {
+      "id": "healthpost",
+      "name": "Ch.1 \u00b7 At the Health Post",
+      "file": "en/sanjeevani_2.json",
+      "scene": "health_int",
+      "foreground": "fg_interpreter"
+    },
+    {
+      "id": "treatment",
+      "name": "Ch.2 \u00b7 Treatment & Family",
+      "file": "en/sanjeevani_3.json",
+      "scene": "home_int",
+      "foreground": "fg_interpreter"
+    },
+    {
+      "id": "recovery",
+      "name": "Ch.3 \u00b7 Recovery & Community",
+      "file": "en/sanjeevani_4.json",
+      "scene": "workfield",
+      "foreground": "fg_interpreter"
+    },
+    {
+      "id": "end",
+      "name": "Ch.4 \u00b7 Call to Action",
+      "file": "en/sanjeevani_5.json",
+      "scene": "end",
+      "foreground": "fg_endcard"
+    }
+  ]
+}

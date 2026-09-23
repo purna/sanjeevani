@@ -1,0 +1,148 @@
+.tools-footer { display: none !important; }
+
+#infoToggle {
+  position: absolute;
+  bottom: 3vh;
+  left: calc(4vw + 64px);
+  z-index: 25;
+  box-sizing: border-box;
+  width: 52px;
+  height: 52px;
+  padding: 7px;
+  display: grid;
+  place-items: center;
+  border: 3px solid var(--ink, #0a0812);
+  border-radius: 6px;
+  background: #67d7e8;
+  color: var(--ink, #0a0812);
+  box-shadow: 4px 4px 0 var(--ink, #0a0812);
+  cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
+}
+#infoToggle:hover { transform: translateY(-2px); box-shadow: 6px 6px 0 var(--ink, #0a0812); }
+#infoToggle:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+#infoToggle svg { width: 29px; height: 29px; overflow: visible; }
+#infoToggle .info-disc { fill: #fff4bb; stroke: currentColor; stroke-width: 2.7; }
+#infoToggle .info-mark { fill: none; stroke: #246bce; stroke-width: 3.1; stroke-linecap: round; }
+
+.story-info-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background: rgba(7, 7, 14, .78);
+  backdrop-filter: blur(8px);
+}
+.story-info-modal[hidden] { display: none; }
+.story-info-card {
+  --modal-ink: #15121d;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(690px, calc(100vw - 32px));
+  max-height: min(70vh, 560px);
+  height: min(70vh, 560px);
+  overflow: hidden; /* the card itself no longer scrolls — see .story-info-scroll */
+  padding: 28px clamp(20px, 5vw, 42px) 0;
+  color: var(--modal-ink);
+  background: #fff4ce;
+  border: 5px solid var(--modal-ink);
+  border-radius: 13px 25px 16px 10px;
+  box-shadow: 12px 12px 0 var(--modal-ink), inset 0 0 35px rgba(167, 111, 32, .16);
+  font-family: "Nunito", sans-serif;
+  transform: rotate(-.25deg);
+}
+.story-info-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: .1;
+  background-image: radial-gradient(#15121d 1px, transparent 1px);
+  background-size: 7px 7px;
+}
+
+/* ── Header: kicker, title, lead, close button — always visible, never scrolls ── */
+.story-info-header { position: relative; flex: 0 0 auto; padding-bottom: 14px; }
+.story-info-close {
+  position: absolute;
+  top: -8px;
+  right: -14px;
+  width: 42px;
+  height: 42px;
+  border: 3px solid var(--modal-ink);
+  border-radius: 50%;
+  background: #ef4b3f;
+  color: #fff;
+  box-shadow: 3px 3px 0 var(--modal-ink);
+  font: 900 24px/1 "Nunito", sans-serif;
+  cursor: pointer;
+}
+
+/* ── Scroll container: everything below the header lives and scrolls here ── */
+.story-info-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: scroll; /* always reserve the gutter so layout doesn't shift on hover */
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  padding-bottom: 28px;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+.story-info-modal { overscroll-behavior: contain; }
+
+/* ── Scrollbar (WebKit + Firefox) — transparent at rest, revealed on hover/focus ── */
+.story-info-scroll { scrollbar-width: auto; scrollbar-color: transparent transparent; transition: scrollbar-color .15s; }
+.story-info-scroll:hover,
+.story-info-scroll:focus-within { scrollbar-color: #ef4b3f #fff4ce; }
+.story-info-scroll::-webkit-scrollbar { width: 12px; }
+.story-info-scroll::-webkit-scrollbar-track { background: transparent; border-left: 2px solid transparent; transition: background .15s, border-color .15s; }
+.story-info-scroll::-webkit-scrollbar-thumb { background: transparent; border: 2px solid transparent; border-radius: 4px; transition: background .15s, border-color .15s; }
+.story-info-scroll:hover::-webkit-scrollbar-track,
+.story-info-scroll:focus-within::-webkit-scrollbar-track { background: #fff4ce; border-left: 2px solid var(--modal-ink); }
+.story-info-scroll:hover::-webkit-scrollbar-thumb,
+.story-info-scroll:focus-within::-webkit-scrollbar-thumb { background: #ef4b3f; border: 2px solid var(--modal-ink); box-shadow: 2px 2px 0 var(--modal-ink); }
+.story-info-scroll::-webkit-scrollbar-thumb:hover { background: #d83a2e; }
+.story-info-scroll::-webkit-scrollbar-corner { background: transparent; }
+
+/* ── Bottom fade cue: shows only while there's more content below (native
+   scrollbars are invisible at rest on many OS/browser combos, so we don't
+   rely on one being visible to tell the user there's more to read) ── */
+.story-info-scroll { position: relative; }
+.story-info-card::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 28px;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent, #fff4ce);
+  opacity: 0;
+  transition: opacity .15s;
+}
+.story-info-card.has-more::after { opacity: 1; }
+
+.story-info-kicker { display: inline-block; padding: 4px 9px; color: #fff; background: #e84036; border: 3px solid var(--modal-ink); font: 9px "Press Start 2P", monospace; }
+.story-info-card h2 { margin: 10px 0 2px; font: 42px/1 "Bangers", sans-serif; letter-spacing: 1px; }
+.story-info-lead { margin: 0; font-weight: 900; color: #7a2a21; }
+.story-info-card h3 { margin: 20px 0 7px; padding-bottom: 4px; border-bottom: 3px solid var(--modal-ink); font: 25px/1 "Bangers", sans-serif; letter-spacing: .6px; }
+.story-info-card h3:first-child { margin-top: 0; }
+.story-info-card p { margin: 7px 0; line-height: 1.45; }
+.story-info-card a { color: #064fa4; font-weight: 900; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.story-info-links { display: flex; flex-wrap: wrap; gap: 9px; }
+.story-info-links a { padding: 8px 11px; color: var(--modal-ink); background: #ffd64a; border: 3px solid var(--modal-ink); border-radius: 5px; box-shadow: 3px 3px 0 var(--modal-ink); text-decoration: none; }
+.story-info-libraries { display: flex; flex-wrap: wrap; gap: 7px; margin: 8px 0; padding: 0; list-style: none; }
+.story-info-libraries li { padding: 5px 9px; background: #fff; border: 2px solid var(--modal-ink); border-radius: 99px; font: 700 12px "Space Mono", monospace; }
+.story-info-small { font-size: 12px; opacity: .76; }
+
+@media (max-width: 640px) {
+  #infoToggle { left: 74px; bottom: 3vh; width: 48px; height: 48px; }
+  .story-info-modal { padding: 12px; }
+  .story-info-card { width: calc(100vw - 24px); max-height: 88vh; padding: 22px 18px 0; box-shadow: 7px 7px 0 var(--modal-ink); }
+  .story-info-close { top: -6px; right: -8px; }
+  .story-info-card h2 { font-size: 34px; }
+}
+@media (prefers-reduced-motion: reduce) { #infoToggle { transition: none; } }

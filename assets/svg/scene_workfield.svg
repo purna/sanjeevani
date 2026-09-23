@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <defs>
+    <linearGradient id="g02sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8AC6FF"/>
+      <stop offset="100%" stop-color="#FFD9A0"/>
+    </linearGradient>
+    <linearGradient id="g02field" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#C7E9A6"/>
+      <stop offset="100%" stop-color="#97C974"/>
+    </linearGradient>
+    <linearGradient id="g02wall" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#F1E1C6"/>
+      <stop offset="100%" stop-color="#D4C19C"/>
+    </linearGradient>
+    <linearGradient id="g02roof" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#C3613C"/>
+      <stop offset="100%" stop-color="#91401F"/>
+    </linearGradient>
+    <linearGradient id="g02soil" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E5C987"/>
+      <stop offset="100%" stop-color="#B4954A"/>
+    </linearGradient>
+    <linearGradient id="g02thatch" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#DFAF5C"/>
+      <stop offset="100%" stop-color="#B8852A"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="0" y="0" width="1920" height="1080" fill="url(#g02sky)"/>
+
+  <path d="M0,470 Q320,440 760,455 Q1180,435 1920,460 L1920,560 Q1180,540 760,560 Q320,540 0,555 Z" fill="url(#g02field)" opacity="0.9"/>
+
+  <g id="distant-hills-sm">
+    <ellipse cx="1580" cy="560" rx="180" ry="28" fill="#5DAA57" opacity="0.75"/>
+    <ellipse cx="980" cy="570" rx="130" ry="24" fill="#4A8F4C" opacity="0.7"/>
+  </g>
+
+  <g id="work-tools" transform="translate(170,560)">
+    <rect x="0" y="-90" width="28" height="90" fill="#6B4226"/>
+    <rect x="28" y="-70" width="6" height="40" fill="#6B4226"/>
+    <polygon points="0,-90 28,-90 18,-98" fill="#8D5A2B"/>
+    <rect x="-8" y="-90" width="40" height="10" fill="#8D5A2B"/>
+    <circle cx="34" cy="-80" r="10" fill="#A56B3A"/>
+    <rect x="44" y="-86" width="14" height="14" fill="#9EC0D9"/>
+    <circle cx="58" cy="-72" r="6" fill="#444"/>
+  </g>
+  <g id="well">
+    <rect x="160" y="600" width="70" height="120" fill="#A58A6F"/>
+    <rect x="150" y="600" width="90" height="16" fill="#7A6248"/>
+    <rect x="160" y="612" width="70" height="10" fill="#8A9AB8"/>
+    <rect x="178" y="606" width="8" height="8" fill="#6B7A8A"/>
+    <circle cx="205" cy="600" r="14" fill="#95A8B8"/>
+  </g>
+
+  <g id="main-house" transform="translate(760,470)">
+    <rect x="-150" y="0" width="300" height="150" fill="url(#g02wall)"/>
+    <rect x="-150" y="0" width="300" height="34" fill="url(#g02thatch)"/>
+    <rect x="-150" y="40" width="300" height="38" fill="#3A6B9E" opacity="0.45"/>
+    <rect x="-34" y="22" width="268" height="4" fill="#3A6B9E" opacity="0.25"/>
+    <line x1="-120" y1="60" x2="-120" y2="150" stroke="#8D6B4A" stroke-width="8" stroke-linecap="round"/>
+    <line x1="120" y1="60" x2="120" y2="150" stroke="#8D6B4A" stroke-width="8" stroke-linecap="round"/>
+  </g>
+
+  <g id="kitchen-shed" transform="translate(580,560)">
+    <rect x="-70" y="-60" width="140" height="60" fill="#ECD9B8"/>
+    <rect x="-70" y="-60" width="140" height="14" fill="url(#g02thatch)"/>
+    <rect x="-66" y="-46" width="124" height="30" fill="#3A6B9E" opacity="0.25"/>
+  </g>
+
+  <g id="compost">
+    <ellipse cx="1060" cy="620" rx="50" ry="26" fill="#6B4C2A"/>
+    <ellipse cx="1060" cy="620" rx="50" ry="8" fill="#4A341D"/>
+  </g>
+
+  <g id="courtyard">
+    <path d="M560,600 L960,600 L940,720 L580,720 Z" fill="url(#g02soil)"/>
+    <circle cx="760" cy="660" r="14" fill="#A58A6F" opacity="0.4"/>
+    <path d="M560,660 C660,630 860,630 960,660" fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.5"/>
+  </g>
+
+  <g id="banana-tree-left">
+    <g transform="translate(420,520)">
+      <path d="M6,0 C7,-46 13,-46 14,0 C13,12 7,12 6,0 Z" fill="#1B5E20"/>
+      <ellipse cx="11" cy="-24" rx="14" ry="6" fill="#1B5E20"/>
+      <ellipse cx="11" cy="-34" rx="19" ry="6" fill="#1B5E20"/>
+    </g>
+  </g>
+
+  <g id="coconut-fringe">
+    <g transform="translate(1480,490)">
+      <path d="M6,0 C8,-48 14,-48 16,0 C14,14 8,14 6,0 Z" fill="#1B5E20"/>
+      <ellipse cx="11" cy="-26" rx="16" ry="6" fill="#1B5E20"/>
+      <ellipse cx="11" cy="-38" rx="21" ry="6" fill="#1B5E20"/>
+    </g>
+  </g>
+
+  <g id="ground-shadow">
+    <rect x="0" y="680" width="1920" height="400" fill="#3B2A1A" opacity="0.2"/>
+  </g>
+</svg>

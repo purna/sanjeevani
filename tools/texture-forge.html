@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Texture Forge — Template</title>
+<style>
+  :root{
+    --bg: #14110f;
+    --panel: #1c1815;
+    --panel2: #221d19;
+    --line: #33291f;
+    --ink: #ece2d2;
+    --ink-dim: #a89a86;
+    --brass: #c69a4e;
+    --brass-dim: #8a6d38;
+    --mono: 'SF Mono', 'Cascadia Code', Consolas, monospace;
+    --serif: Georgia, 'Iowan Old Style', serif;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+  html,body{ margin:0; background:var(--bg); color:var(--ink); font-family:var(--mono); font-size:14px; }
+
+  /* ============ MOBILE-FIRST BASE (single scrolling column) ============ */
+  #app{ display:flex; flex-direction:column; min-height:100dvh; }
+
+  header{ padding:16px 16px 10px; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--bg); z-index:20;}
+  h1{ font-family:var(--serif); font-size:19px; font-weight:600; letter-spacing:.02em; color:var(--brass); margin:0 0 3px 0;}
+  .sub{ color:var(--ink-dim); font-size:11.5px; line-height:1.4; }
+
+  /* group pills */
+  #groupRow{ display:flex; gap:8px; padding:12px 16px; overflow-x:auto; scrollbar-width:none; border-bottom:1px solid var(--line);}
+  #groupRow::-webkit-scrollbar{ display:none; }
+  .pill{
+    flex-shrink:0; padding:8px 14px; border-radius:20px; border:1px solid var(--line);
+    background:var(--panel2); color:var(--ink-dim); font-family:var(--mono); font-size:12.5px;
+    white-space:nowrap; cursor:pointer;
+  }
+  .pill.active{ background:var(--brass); border-color:var(--brass); color:#1c1815; font-weight:600; }
+
+  /* texture chip strip */
+  #rail{ display:flex; gap:8px; padding:12px 16px; overflow-x:auto; scrollbar-width:none; }
+  #rail::-webkit-scrollbar{ display:none; }
+  .tex-btn{
+    flex-shrink:0; display:flex; align-items:center; gap:7px;
+    background:var(--panel2); border:1px solid var(--line); color:var(--ink);
+    padding:9px 13px; border-radius:8px; cursor:pointer; font-family:var(--mono);
+    font-size:12.5px; white-space:nowrap; min-height:40px;
+  }
+  .tex-btn.active{ border-color:var(--brass); color:var(--brass); background:#241d15; }
+  .swatch{ width:14px; height:14px; border-radius:3px; flex-shrink:0; border:1px solid rgba(0,0,0,.4);}
+
+  /* preview */
+  #main{ padding:4px 16px 16px; }
+  #previewWrap{
+    width:100%; aspect-ratio: 1 / 1; max-height:min(62vw, 380px);
+    border:1px solid var(--line); border-radius:10px;
+    background:
+      linear-gradient(45deg,#2a251f 25%,transparent 25%),
+      linear-gradient(-45deg,#2a251f 25%,transparent 25%),
+      linear-gradient(45deg,transparent 75%,#2a251f 75%),
+      linear-gradient(-45deg,transparent 75%,#2a251f 75%);
+    background-size:16px 16px; background-position:0 0,0 8px,8px -8px,-8px 0px;
+    position:relative; overflow:hidden;
+  }
+  #previewSvg{ width:100%; height:100%; display:block; }
+  .tile-hint{
+    position:absolute; bottom:8px; right:10px; font-size:10.5px; color:var(--ink-dim);
+    background:rgba(20,17,15,.8); padding:4px 8px; border-radius:4px; pointer-events:none;
+  }
+
+  #shapeLabel{ color:var(--ink-dim); font-size:11px; text-transform:uppercase; letter-spacing:.08em; margin:14px 0 8px;}
+  #shapeRow{ display:flex; gap:10px; overflow-x:auto; scrollbar-width:none; padding-bottom:2px;}
+  #shapeRow::-webkit-scrollbar{ display:none; }
+  .shape-preview{
+    width:60px; height:60px; flex-shrink:0; border:1px solid var(--line); border-radius:8px; overflow:hidden;
+    background:var(--panel2); cursor:pointer;
+  }
+  .shape-preview svg{ width:100%; height:100%; }
+  .shape-preview.active{ outline:2px solid var(--brass); outline-offset:-1px; }
+
+  /* controls */
+  #ctrl{ padding:6px 16px 32px; border-top:1px solid var(--line); margin-top:6px;}
+  .grp{ margin-top:20px; }
+  .grp > label{ display:block; font-size:11px; color:var(--ink-dim); margin-bottom:10px; text-transform:uppercase; letter-spacing:.08em;}
+
+  .colorRow{ display:flex; gap:14px; flex-wrap:wrap; }
+  .colorItem{ display:flex; flex-direction:column; align-items:center; gap:5px; }
+  .colorItem span{ font-size:10.5px; color:var(--ink-dim); }
+  input[type=color]{ width:44px; height:36px; border:1px solid var(--line); border-radius:6px; background:none; padding:0; cursor:pointer; }
+
+  .row{ margin-bottom:16px; }
+  .row .rowtop{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
+  .row label{ font-size:12.5px; color:var(--ink); }
+  .row .valnum{ color:var(--brass); font-size:12px; font-variant-numeric:tabular-nums; }
+  input[type=range]{ width:100%; accent-color:var(--brass); height:28px; }
+
+  button.action{
+    width:100%; padding:13px; background:var(--panel2); border:1px solid var(--brass-dim);
+    color:var(--brass); font-family:var(--mono); font-size:13px; border-radius:8px; cursor:pointer;
+    margin-bottom:10px; letter-spacing:.02em; min-height:46px;
+  }
+  button.action.primary{ background:var(--brass); color:#1c1815; font-weight:700; border-color:var(--brass); }
+  button.action.ghost{ background:transparent; border-color:var(--line); color:var(--ink-dim); }
+
+  .filesize{ font-size:11.5px; color:var(--ink-dim); text-align:right; margin-top:2px; margin-bottom:14px;}
+  .codebox{
+    background:#0f0d0b; border:1px solid var(--line); border-radius:6px; padding:10px;
+    font-size:10.5px; color:#8fbf8a; max-height:180px; overflow:auto; white-space:pre-wrap; word-break:break-all;
+    margin-top:8px; display:none;
+  }
+  .codebox.open{ display:block; }
+
+  .toast{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+    background:var(--brass); color:#1c1815; padding:10px 18px; border-radius:6px;
+    font-size:13px; font-weight:700; opacity:0; pointer-events:none; transition:opacity .2s; z-index:50;
+  }
+  .toast.show{ opacity:1; }
+
+  /* ============ DESKTOP: reflow into 3-pane layout ============ */
+  @media (min-width: 860px){
+    html,body{ height:100vh; overflow:hidden; }
+    #app{ height:100vh; display:grid; grid-template-columns:200px 1fr 320px; grid-template-rows:auto 1fr; grid-template-areas: "hdr hdr hdr" "rail main ctrl"; }
+    header{ grid-area:hdr; position:static; }
+    #groupRow{ display:none; } /* on desktop we show all groups stacked in rail */
+    #rail{
+      grid-area:rail; flex-direction:column; overflow-y:auto; overflow-x:hidden; border-right:1px solid var(--line);
+      padding:16px 10px; align-items:stretch; background:var(--panel2);
+    }
+    #rail .cat{ color:var(--ink-dim); font-size:10px; letter-spacing:.12em; text-transform:uppercase; margin:14px 6px 6px;}
+    .tex-btn{ width:100%; }
+    #main{ grid-area:main; overflow-y:auto; padding:20px 24px; }
+    #previewWrap{ max-height:none; height:min(50vh, 420px); aspect-ratio:auto; }
+    #ctrl{ grid-area:ctrl; overflow-y:auto; border-top:none; border-left:1px solid var(--line); background:var(--panel); padding:18px; margin-top:0;}
+    .codebox{ display:block !important; }
+    #codeToggleBtn{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <header>
+    <h1>Texture Forge</h1>
+    <div class="sub">Seamless SVG materials used in the story of Template.</div>
+  </header>
+
+  <div id="groupRow"></div>
+  <nav id="rail"></nav>
+
+  <main id="main">
+    <div id="previewWrap">
+      <svg id="previewSvg" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="tile-hint" id="tileHint">tile 0×0</div>
+    </div>
+    <div id="shapeLabel">Variant</div>
+    <div id="shapeRow"></div>
+  </main>
+
+  <div id="ctrl">
+    <div class="grp">
+      <label>Palette</label>
+      <div class="colorRow" id="colorRow"></div>
+    </div>
+
+    <div class="grp" id="paramGrp"></div>
+
+    <div class="grp">
+      <label>Seed</label>
+      <div class="row">
+        <div class="rowtop"><label>Value</label><span class="valnum" id="seedVal">1</span></div>
+        <input type="range" id="seedRange" min="1" max="9999" value="1">
+      </div>
+      <button class="action ghost" id="randomizeBtn">🎲 Randomize seed</button>
+    </div>
+
+    <div class="grp">
+      <label>Export</label>
+      <button class="action primary" id="downloadSvgBtn">⬇ Download .svg</button>
+      <button class="action" id="copyPatternBtn">Copy &lt;pattern&gt; markup</button>
+      <button class="action" id="copyCssBtn">Copy CSS class (data URI)</button>
+      <div class="filesize" id="fileSize"></div>
+      <button class="action ghost" id="codeToggleBtn">Show CSS code ▾</button>
+      <div class="codebox" id="cssPreview"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copied</div>
+
+<script>
+/* ============================================================
+   Seeded RNG
+============================================================ */
+function mulberry32(seed){
+  let a = seed >>> 0;
+  return function(){
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function rnd(rng, min, max){ return min + rng() * (max - min); }
+function rndInt(rng, min, max){ return Math.floor(rnd(rng, min, max + 1)); }
+function pick(rng, arr){ return arr[Math.floor(rng() * arr.length)]; }
+
+/* color helpers */
+function hexToRgb(hex){
+  hex = hex.replace('#','');
+  if(hex.length === 3) hex = hex.split('').map(c=>c+c).join('');
+  const n = parseInt(hex,16);
+  return { r:(n>>16)&255, g:(n>>8)&255, b:n&255 };
+}
+function rgbToHex(r,g,b){
+  const c = v => Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0');
+  return '#'+c(r)+c(g)+c(b);
+}
+function shade(hex, amt){
+  const {r,g,b} = hexToRgb(hex);
+  const f = amt < 0 ? amt+1 : amt;
+  const t = amt < 0 ? 0 : 255;
+  const p = Math.abs(amt);
+  return rgbToHex(r+(t-r)*p*0+ (amt<0? r*f - r : (t-r)*p), g+(amt<0? g*f-g : (t-g)*p), b+(amt<0? b*f-b : (t-b)*p));
+}
+function mix(hexA, hexB, t){
+  const a = hexToRgb(hexA), b = hexToRgb(hexB);
+  return rgbToHex(a.r+(b.r-a.r)*t, a.g+(b.g-a.g)*t, a.b+(b.b-a.b)*t);
+}
+function fmt(n){ return Math.round(n*100)/100; }
+
+/* ============================================================
+   Seamless-tiling + shape-variety helpers
+   wrapOffsets/wrapGroup: when an item sits near a tile edge,
+   also draw it translated by ±w/±h so it overlaps the seam and
+   the pattern reads as continuous once tiled. blobPath/starPath/
+   leafPath/diamondPath give scatter-type textures more than one
+   silhouette to draw from.
+============================================================ */
+function wrapOffsets(x,y,w,h,margin){
+  const offs = [[0,0]];
+  const left = x < margin, right = x > w-margin;
+  const top = y < margin, bottom = y > h-margin;
+  if(left) offs.push([w,0]);
+  if(right) offs.push([-w,0]);
+  if(top) offs.push([0,h]);
+  if(bottom) offs.push([0,-h]);
+  if(left&&top) offs.push([w,h]);
+  if(left&&bottom) offs.push([w,-h]);
+  if(right&&top) offs.push([-w,h]);
+  if(right&&bottom) offs.push([-w,-h]);
+  return offs;
+}
+function wrapGroup(x,y,w,h,margin,inner){
+  return wrapOffsets(x,y,w,h,margin).map(([dx,dy])=>
+    `<g transform="translate(${fmt(x+dx)} ${fmt(y+dy)})">${inner}</g>`
+  ).join('');
+}
+function blobPath(rng, r, sidesMin, sidesMax){
+  const sides = rndInt(rng, sidesMin||5, sidesMax||9);
+  let pts=[];
+  for(let s=0;s<sides;s++){
+    const ang=(s/sides)*Math.PI*2;
+    const rr = r*rnd(rng,0.62,1.28);
+    pts.push([Math.cos(ang)*rr, Math.sin(ang)*rr]);
+  }
+  let d = `M ${fmt(pts[0][0])} ${fmt(pts[0][1])}`;
+  for(let i=1;i<pts.length;i++) d += ` L ${fmt(pts[i][0])} ${fmt(pts[i][1])}`;
+  return d+' Z';
+}
+function starPath(rng, rOuter, pointsMin, pointsMax){
+  const points = rndInt(rng, pointsMin||5, pointsMax||7);
+  const rInner = rOuter*rnd(rng,0.36,0.58);
+  let pts=[];
+  for(let i=0;i<points*2;i++){
+    const ang = (i/(points*2))*Math.PI*2 - Math.PI/2;
+    const rr = i%2===0? rOuter: rInner;
+    pts.push([Math.cos(ang)*rr, Math.sin(ang)*rr]);
+  }
+  let d = `M ${fmt(pts[0][0])} ${fmt(pts[0][1])}`;
+  for(let i=1;i<pts.length;i++) d += ` L ${fmt(pts[i][0])} ${fmt(pts[i][1])}`;
+  return d+' Z';
+}
+function leafPath(s){
+  return `M0,${fmt(-s/2)} C ${fmt(s*0.35)},${fmt(-s*0.2)} ${fmt(s*0.35)},${fmt(s*0.2)} 0,${fmt(s/2)} C ${fmt(-s*0.35)},${fmt(s*0.2)} ${fmt(-s*0.35)},${fmt(-s*0.2)} 0,${fmt(-s/2)} Z`;
+}
+function diamondPath(r){
+  return `M0,${fmt(-r)} L${fmt(r)},0 L0,${fmt(r)} L${fmt(-r)},0 Z`;
+}
+
+/* ============================================================
+   Texture Library
+============================================================ */
+const STORY_TEXTURE_CONFIG = {"story":"Template","keys":["stone","wood_oak","fabric_weave","water_still","grass"]};
+const FULL_LIB = {
+
+  water_still: {
+    label:'Still Water', group:'Water',
+    colors:['#1c4f63','#2e7488','#bfe6e8'],
+    colorNames:['deep','mid','glint'],
+    params:{ lines:{label:'Ripple lines', min:3, max:18, step:1, def:7},
+             wave:{label:'Wave height', min:1, max:14, step:0.5, def:3},
+             opacity:{label:'Line opacity', min:0.1, max:0.9, step:0.05, def:0.35},
+             thickness:{label:'Line thickness', min:0.3, max:4, step:0.1, def:1.1} },
+    shapes:[
+      { key:'calm', label:'Calm', build(rng,p,c){
+        const w=140,h=90; let body=`<rect width="${w}" height="${h}" fill="${c[0]}"/>`;
+        body += `<rect width="${w}" height="${h}" fill="url(#g_${c.uid})" opacity=".5"/>`;
+        for(let i=0;i<p.lines;i++){
+          const y = rnd(rng, 4, h-4);
+          const amp = rnd(rng, p.wave*0.5, p.wave);
+          const col = rng()>0.72? c[2] : c[1];
+          const tw = fmt(rnd(rng, p.thickness*0.5, p.thickness*1.4));
+          let d = `M ${-10} ${fmt(y)}`;
+          for(let x=0;x<=w+10;x+=w/8){
+            const yy = y + Math.sin((x/w)*Math.PI*2 + i)*amp;
+            d += ` Q ${fmt(x+w/16)} ${fmt(yy-amp)} ${fmt(x+w/8)} ${fmt(y)}`;
+          }
+          body += `<path d="${d}" stroke="${col}" stroke-width="${tw}" fill="none" opacity="${fmt(p.opacity)}"/>`;
+          if(y - amp < 6) body += `<path d="${d}" stroke="${col}" stroke-width="${tw}" fill="none" opacity="${fmt(p.opacity)}" transform="translate(0 ${h})"/>`;
+          if(y + amp > h-6) body += `<path d="${d}" stroke="${col}" stroke-width="${tw}" fill="none" opacity="${fmt(p.opacity)}" transform="translate(0 ${-h})"/>`;
+        }
+        return {w,h,body,defs:`<linearGradient id="g_${c.uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c[1]}" stop-opacity=".3"/><stop offset="1" stop-color="${c[0]}" stop-opacity="0"/></linearGradient>`};
+      }},
+      { key:'eddies', label:'Eddies', build(rng,p,c){
+        const w=130,h=100; let body=`<rect width="${w}" height="${h}" fill="${c[0]}"/>`;
+        const rings = Math.max(2, Math.round(p.lines/2));
+        for(let i=0;i<rings;i++){
+          const cx=rnd(rng,0,w), cy=rnd(rng,0,h);
+          const baseR = rnd(rng, 6, 9+p.wave);
+          const col = rng()>0.7? c[2]:c[1];
+          const rot = rnd(rng,0,360);
+          let inner='';
+          for(let r=baseR; r>2; r-=rnd(rng,2.5,4.5)){
+            inner += `<circle r="${fmt(r)}" fill="none" stroke="${col}" stroke-width="${fmt(rnd(rng,p.thickness*0.4,p.thickness))}" opacity="${fmt(p.opacity*rnd(rng,0.6,1))}"/>`;
+          }
+          body += wrapGroup(cx,cy,w,h,baseR, `<g transform="rotate(${fmt(rot)})">${inner}</g>`);
+        }
+        return {w,h,body};
+      }}
+    ]
+  },
+
+  water_fast: {
+    label:'Fast Water', group:'Water',
+    colors:['#134b5e','#3fa4bd','#eaf7f8'],
+    colorNames:['base','flow','foam'],
+    params:{ chevrons:{label:'Chevron rows', min:2, max:10, step:1, def:4},
+             foam:{label:'Foam flecks', min:0, max:60, step:2, def:16},
+             turbulence:{label:'Turbulence', min:1, max:16, step:0.5, def:5},
+             thickness:{label:'Line thickness', min:0.5, max:5, step:0.1, def:1.6} },
+    shapes:[
+      { key:'rapids', label:'Rapids', build(rng,p,c){
+        const w=120,h=80; let body=`<rect width="${w}" height="${h}" fill="${c[0]}"/>`;
+        const rowH = h/p.chevrons;
+        for(let i=0;i<p.chevrons;i++){
+          const y = rowH*i + rowH/2 + rnd(rng,-3,3);
+          const amp = rnd(rng, p.turbulence*0.5, p.turbulence);
+          let d = `M -10 ${y}`;
+          for(let x=0;x<=w+20;x+=14){
+            d += ` L ${x} ${y + (Math.floor(x/14)%2? amp: -amp)}`;
+          }
+          body += `<path d="${d}" stroke="${c[1]}" stroke-width="${fmt(rnd(rng,p.thickness*0.6,p.thickness*1.5))}" fill="none" opacity="${fmt(rnd(rng,0.35,0.7))}"/>`;
+        }
+        for(let i=0;i<p.foam;i++){
+          const x=rnd(rng,0,w), y=rnd(rng,0,h), r=rnd(rng,0.5,2.2);
+          body += wrapGroup(x,y,w,h,r, `<circle r="${fmt(r)}" fill="${c[2]}" opacity="${fmt(rnd(rng,0.4,0.85))}"/>`);
+        }
+        return {w,h,body};
+      }},
+      { key:'churn', label:'Churn', build(rng,p,c){
+        const w=110,h=90; let body=`<rect width="${w}" height="${h}" fill="${c[0]}"/>`;
+        const swirls = Math.max(3, p.chevrons+2);
+        for(let i=0;i<swirls;i++){
+          const cx=rnd(rng,0,w), cy=rnd(rng,0,h), r=rnd(rng,6,10+p.turbulence);
+          const rot=rnd(rng,0,360);
+          const col = rng()>0.5? c[1]:c[2];
+          const inner = `<path d="M ${fmt(-r)} 0 A ${fmt(r)} ${fmt(r*0.6)} 0 1 1 ${fmt(r)} 0" fill="none" stroke="${col}" stroke-width="${fmt(rnd(rng,p.thickness*0.6,p.thickness*1.3))}" opacity="${fmt(rnd(rng,0.4,0.75))}"/>`;
+          body += wrapGroup(cx,cy,w,h,r, `<g transform="rotate(${fmt(rot)})">${inner}</g>`);
+        }
+        for(let i=0;i<p.foam;i++){
+          const x=rnd(rng,0,w), y=rnd(rng,0,h), r=rnd(rng,0.5,2);
+          body += wrapGroup(x,y,w,h,r, `<circle r="${fmt(r)}" fill="${c[2]}" opacity="${fmt(rnd(rng,0.4,0.85))}"/>`);
+        }
+        return {w,h,body};
+      }}
+    ]
+  },
+
+  wood_oak: {
+    label:'Oak Plank', group:'Wood',
+    colors:['#a9723f','#8a5a2e','#5e3c1c'],
+    colorNames:['base','grain','dark'],
+    params:{ grainLines:{label:'Grain lines', min:4, max:26, step:1, def:11},
+             knots:{label:'Knot chance %', min:0, max:100, step:5, def:20},
+             warp:{label:'Grain warp', min:1, max:20, step:1, def:6},
+             thickness:{label:'Line thickness', min:0.3, max:3, step:0.1, def:1} },
+    shapes:[
+      { key:'plank', label:'Plank', build(rng,p,c){
+        const w=100,h=140; let body=`<rect width="${w}" height="${h}" fill="${c[0]}"/>`;
+        for(let i=0;i<p.grainLines;i++){
+          const x0 = rnd(rng,-6,w+6);
+          const bow = rnd(rng,4,p.warp);
+          const col = rng()>0.7? c[2] : c[1];
+          let d = `M ${x0} -6`;
+          d += ` C ${x0+bow} ${h*0.33} ${x0-bow} ${h*0.66} ${x0+rnd(rng,-bow,bow)} ${h+6}`;
+          body += `<path d="${d}" stroke="${col}" stroke-width="${fmt(rnd(rng,p.thickness*0.5,p.thickness*1.6))}" fill="none" opacity="${fmt(rnd(rng,0.3,0.65))}"/>`;
+        }
+        const knotCount = rng()*100 < p.knots ? rndInt(rng,1,2) : 0;
+        for(let k=0;k<knotCount;k++){
+          const kx=rnd(rng,20,w-20), ky=rnd(rng,20,h-20);
+          for(let r=10;r>0;r-=2.2){
+            body += `<ellipse cx="${fmt(kx)}" cy="${fmt(ky)}" rx="${fmt(r*0.6)}" ry="${fmt(r)}" fill="none" stroke="${c[2]}" stroke-width="0.6" opacity="0.5" transform="rotate(${fmt(rnd(rng,-15,15))} ${fmt(kx)} ${fmt(ky)})"/>`;
+          }
+        }
+        return {w,h,body};
+      }},
+      { key:'planks3', label:'3-Plank', build(rng,p,c){
+        const w=140,h=90; let body='';
+        const pw = w/3;
+        for(let pi=0;pi<3;pi++){
+          const ox = pi*pw;
+          body += `<rect x="${ox}" width="${pw-2}" height="${h}" fill="${mix(c[0],c[2],rnd(rng,0,0.2))}"/>`;
+          body += `<rect x="${ox+pw-2}" width="2" height="${h}" fill="${c[2]}" opacity="0.6"/>`;
+          const lines = Math.max(2, Math.round(p.grainLines/3));
+          for(let i=0;i<lines;i++){
+            const y0 = rnd(rng,0,h);
+            const col = rng()>0.7? c[2] : c[1];
+            let d = `M ${ox} ${y0}`;
+            d += ` C ${ox+pw*0.33} ${y0+rnd(rng,-p.warp,p.warp)} ${ox+pw*0.66} ${y0+rnd(rng,-p.warp,p.warp)} ${ox+pw-2} ${y0+rnd(rng,-4,4)}`;
+            body += `<path d="${d}" stroke="${col}" stroke-width="${fmt(rnd(rng,p.thickness*0.5,p.thickness*1.4))}" fill="none" opacity="${fmt(rnd(rng,0.3,0.6))}"/>`;
+          }
+          if(rng()*100 < p.knots){
+            const kx=ox+rnd(rng,10,pw-10), ky=rnd(rng,15,h-15);
+            for(let r=7;r>0;r-=1.8){
+              body += `<ellipse cx="${fmt(kx)}" cy="${fmt(ky)}" rx="${fmt(r*0.6)}" ry="${fmt(r)}" fill="none" stroke="${c[2]}" stroke-width="0.5" opacity="0.5"/>`;
+            }
+          }
+        }
+        return {w,h,body};
+      }}
+    ]
+  },
+
+  wood_dark: {
+    label:'Dark Timber', group:'Wood',
+    colors:['#3a291c','#2a1c12','#5c4128'],
+    colorNames:['base','shadow','grain'],
+    params:{ grainLines:{label:'Grain lines', min:4, max:24, step:1, def:10},
+             knots:{label:'Knot chance %', min:0, max:100, step:5, def:15},
+             warp:{label:'Grain warp', min:1, max:18, step:1, def:5},
+             thickness:{label:'Line thickness', min:0.3, max:3, step:0.1, def:1.1} },
+    shapes:[
+      { key:'plank', label:'Plank', build(rng,p,c){
+        const w=100,h=140; let body=`<rect width="${w}" height="${h}" fill="${c[0]}"/>`;
+        for(let i=0;i<p.grainLines;i++){
+          const x0 = rnd(rng,-6,w+6);
+          const bow = rnd(rng,4,p.warp);
+          const col = rng()>0.6? c[1] : c[2];
+          let d = `M ${x0} -6 C ${x0+bow} ${h*0.33} ${x0-bow} ${h*0.66} ${x0+rnd(rng,-bow,bow)} ${h+6}`;
+          body += `<path d="${d}" stroke="${col}" stroke-width="${fmt(rnd(rng,p.thickness*0.5,p.thickness*1.7))}" fill="none" opacity="${fmt(rnd(rng,0.3,0.6))}"/>`;
+        }
+        if(rng()*100 < p.knots){
+          const kx=rnd(rng,20,w-20), ky=rnd(rng,20,h-20);
+          for(let r=9;r>0;r-=2){
+            body += `<ellipse cx="${fmt(kx)}" cy="${fmt(ky)}" rx="${fmt(r*0.6)}" ry="${fmt(r)}" fill="none" stroke="${c[1]}" stroke-width="0.6" opacity="0.5"/>`;
+          }
+        }
+        return {w,h,body};
+      }}
+    ]
+  },
+
+  stone: {
+    label:'Stone', group:'Structure',
+    colors:['#8b8779','#6f6b5e','#a8a495'],
+    colorNames:['base','shadow','highlight'],
+    params:{ blotches:{label:'Blotches', min:6, max:60, step:2, def:22},
+             cracks:{label:'Cracks', min:0, max:14, step:1, def:3},
+             roughness:{label:'Roughness', min:1, max:16, step:1, def:6},
+             variety:{label:'Shape variety', min:0, max:100, step:5, def:35} },
+    shapes:[
+      { key:'rough', label:'Rough', build(rng,p,c){
+        const w=110,h=110; let body=`<rect width="${w}" height="${h}" fill="${c[0]}"/>`;
+        for(let i=0;i<p.blotches;i++){
+          const cx=rnd(rng,0,w), cy=rnd(rng,0,h), r=rnd(rng,3,4+p.roughness);
+          const rot = rnd(rng,0,360);
+          const col = rng()>0.5? c[1] : c[2];
+          let shapeD;
+          if(rng()*100 < p.variety*0.4) shapeD = starPath(rng, r, 5, 8);
+          else if(rng()*100 < p.variety) shapeD = `M0,${fmt(-r)} A ${fmt(r)} ${fmt(r*rnd(rng,0.6,1))} 0 1 1 0 ${fmt(r)} A ${fmt(r)} ${fmt(r*rnd(rng,0.6,1))} 0 1 1 0 ${fmt(-r)} Z`;
+          else shapeD = blobPath(rng, r, 5, 9);
+          const inner = `<path d="${shapeD}" fill="${col}" opacity="${fmt(rnd(rng,0.08,0.24))}" transform="rotate(${fmt(rot)})"/>`;
+          body += wrapGroup(cx,cy,w,h,r,inner);
+        }
+        for(let i=0;i<p.cracks;i++){
+          let x=rnd(rng,0,w), y=rnd(rng,0,h);
+          let d=`M ${fmt(x)} ${fmt(y)}`;
+          const segs = rndInt(rng,2,5);
+          for(let s=0;s<segs;s++){
+            x += rnd(rng,-16,16); y += rnd(rng,-16,16);
+            d += ` L ${fmt(x)} ${fmt(y)}`;
+          }
+          body += `<path d="${d}" stroke="${c[1]}" stroke-width="${fmt(rnd(rng,0.4,1))}" fill="none" opacity="0.4"/>`;
+        }
+        return {w,h,body};
+      }},
+      { key:'flagstone', label:'Flagstone', build(rng,p,c){
+        const w=120,h=120; let body=`<rect width="${w}" height="${h}" fill="${c[1]}"/>`;
+        const cells = 5;
+        for(let gy=-1; gy<=cells; gy++){
+          for(let gx=-1; gx<=cells; gx++){
+            const cx = (gx+0.5)*(w/cells) + rnd(rng,-6,6);
+            const cy = (gy+0.5)*(h/cells) + rnd(rng,-6,6);
+            const r = (w/cells)*0.55*rnd(rng,0.75,1.1);
+            const col = mix(c[0], c[2], rnd(rng,0,0.5));
+            const rot = rnd(rng,0,360);
+            body += wrapGroup(cx,cy,w,h,r, `<g transform="rotate(${fmt(rot)})"><path d="${blobPath(rng,r,6,10)}" fill="${col}" stroke="${c[1]}" stroke-width="${fmt(rnd(rng,1,2.2))}"/></g>`);
+          }
+        }
+        return {w,h,body};
+      }}
+    ]
+  },
+
+  wall_brick: {
+    label:'Brick Wall', group:'Structure',
+    colors:['#9c5236','#7c3f28','#c9b79a'],
+    colorNames:['brick','shadow','mortar'],
+    params:{ brickW:{label:'Brick width', min:20, max:50, step:2, def:34},
+             brickH:{label:'Brick height', min:10, max:24, step:1, def:14},
+             mortar:{label:'Mortar gap', min:1, max:5, step:0.5, def:2},
+             variation:{label:'Color variation', min:0, max:60, step:2, def:18} },
+    shapes:[
+      { key:'running', label:'Running bond', build(rng,p,c){
+        const bw=p.brickW, bh=p.brickH, gap=p.mortar;
+        const w=bw*2, h=bh*2;
+        let body = `<rect width="${w}" height="${h}" fill="${c[2]}"/>`;
+        for(let row=0;row<2;row++){
+          const offset = row%2? bw/2 : 0;
+          for(let x=-bw; x<w+bw; x+=bw+gap){
+            const col = mix(c[0], c[1], rnd(rng,0,p.variation/100));
+            const jr = rnd(rng,-1.2,1.2);
+            body += `<g transform="rotate(${fmt(jr)} ${fmt(x+offset+bw/2)} ${fmt(row*(bh+gap)+bh/2)})"><rect x="${fmt(x+offset)}" y="${row*(bh+gap)}" width="${fmt(bw-gap)}" height="${fmt(bh-gap)}" fill="${col}" rx="0.6"/></g>`;
+          }
+        }
+        return {w,h,body};
+      }},
+      { key:'stacked', label:'Stacked', build(rng,p,c){
+        const bw=p.brickW, bh=p.brickH, gap=p.mortar;
+        const w=bw, h=bh*2;
+        let body = `<rect width="${w}" height="${h}" fill="${c[2]}"/>`;
+        for(let row=0;row<2;row++){
+          const col = mix(c[0], c[1], rnd(rng,0,p.variation/100));
+          body += `<rect x="0" y="${row*(bh+gap)}" width="${fmt(bw-gap)}" height="${fmt(bh-gap)}" fill="${col}"/>`;
+        }
+        return {w,h,body};
+      }},
+      { key:'herringbone', label:'Herringbone', build(rng,p,c){
+        const u = p.brickH*1.6;
+        const w=u*4, h=u*4;
+        let body = `<rect width="${w}" height="${h}" fill="${c[2]}"/>`;
+        const stickW = u*0.9, stickH = u*0.34;
+        for(let row=-1; row<=4; row++){
+          const dir = row%2===0? 1 : -1;
+          const y = row*u;
+          for(let col=-1; col<=4; col++){
+            const x = col*u + (dir>0?0:u/2);
+            const cCol = mix(c[0], c[1], rnd(rng,0,p.variation/100));
+            body += `<g transform="translate(${fmt(x)} ${fmt(y)}) rotate(${dir*45})"><rect x="${fmt(-stickW/2)}" y="${fmt(-stickH/2)}" width="${fmt(stickW)}" height="${fmt(stickH)}" fill="${cCol}" opacity="${fmt(rnd(rng,0.85,1))}"/></g>`;
+          }
+        }
+        return {w,h,body};
+      }}
+    ]
+  },
+
+  mosaic: {
+    label:'Mosaic', group:'Structure',
+    colors:['#2c6e8e','#c9973f','#e8e2d0'],
+    colorNames:['a','b','grout'],
+    params:{ tileSize:{label:'Tile size', min:8, max:26, step:1, def:15},
+             grout:{label:'Grout width', min:0.5, max:3, step:0.25, def:1.2},
+             jitter:{label:'Rotation jitter', min:0, max:60, step:1, def:10} },
+    shapes:[
+      { key:'grid', label:'Grid', build(rng,p,c){
+        const ts=p.tileSize, cols=4, rows=4;
+        const w=ts*cols, h=ts*rows;
+        let body = `<rect width="${w}" height="${h}" fill="${c[2]}"/>`;
+        const palette=[c[0],c[1],mix(c[0],c[1],0.5),shade(c[0],0.25),shade(c[1],-0.2)];
+        for(let r=0;r<rows;r++){
+          for(let cix=0;cix<cols;cix++){
+            const x=cix*ts, y=r*ts;
+            const rot = rnd(rng,-p.jitter,p.jitter);
+            const col = pick(rng,palette);
+            body += `<g transform="translate(${fmt(x+ts/2)} ${fmt(y+ts/2)}) rotate(${fmt(rot)})"><rect x="${fmt(-ts/2+p.grout/2)}" y="${fmt(-ts/2+p.grout/2)}" width="${fmt(ts-p.grout)}" height="${fmt(ts-p.grout)}" fill="${col}"/></g>`;
+          }
+        }
+        return {w,h,body};
+      }},
+      { key:'chips', label:'Broken chips', build(rng,p,c){
+        const ts=p.tileSize, cols=4, rows=4;
+        const w=ts*cols, h=ts*rows;
+        let body = `<rect width="${w}" height="${h}" fill="${c[2]}"/>`;
+        const palette=[c[0],c[1],mix(c[0],c[1],0.5),shade(c[0],0.25),shade(c[1],-0.2)];
+        for(let r=0;r<rows;r++){
+          for(let cix=0;cix<cols;cix++){
+            const x=cix*ts+ts/2, y=r*ts+ts/2;
+            const rot = rnd(rng,0,360);
+            const col = pick(rng,palette);
+            const rr = (ts-p.grout)*0.55*rnd(rng,0.85,1.05);
+            body += `<g transform="translate(${fmt(x)} ${fmt(y)}) rotate(${fmt(rot)})"><path d="${blobPath(rng, rr, 4, 6)}" fill="${col}"/></g>`;
+          }
+        }
+        return {w,h,body};
+      }}
+    ]
+  },
+
+  leaves: {
+    label:'Leaves', group:'Foliage',
+    colors:['#2f5c34','#3f7a44','#6fa562'],
+    colorNames:['dark','mid','light'],
+    params:{ count:{label:'Leaf count', min:3, max:26, step:1, def:10},
+             size:{label:'Leaf size', min:6, max:26, step:1, def:13},
+             jitter:{label:'Scatter jitter', min:0, max:20, step:1, def:8},
+             variety:{label:'Shape variety', min:0, max:100, step:5, def:30} },
+    shapes:[
+      { key:'scatter', label:'Scattered', build(rng,p,c){
+        const w=90,h=90; let body=`<rect width="${w}" height="${h}" fill="${c[0]}"/>`;
+        for(let i=0;i<p.count;i++){
+          const x=rnd(rng,0,w), y=rnd(rng,0,h);
+          const s=rnd(rng,p.size*0.6,p.size*1.15);
+          const rot=rnd(rng,0,360);
+          const col = pick(rng,[c[1],c[2],mix(c[1],c[2],0.5)]);
+          let inner;
+          const roll = rng()*100;
+          if(roll < p.variety*0.5){
+            inner = `<path d="${starPath(rng, s/2, 5, 6)}" fill="${col}" opacity="${fmt(rnd(rng,0.7,1))}"/>`;
+          } else if(roll < p.variety){
+            inner = `<circle r="${fmt(s*0.32)}" fill="${col}" opacity="${fmt(rnd(rng,0.7,1))}"/>`;
+          } else {
+            inner = `<path d="${leafPath(s)}" fill="${col}" opacity="${fmt(rnd(rng,0.7,1))}"/><line x1="0" y1="${fmt(-s/2)}" x2="0" y2="${fmt(s/2)}" stroke="${c[0]}" stroke-width="0.4" opacity="0.5"/>`;
+          }
+          body += wrapGroup(x,y,w,h,s/2,`<g transform="rotate(${fmt(rot)})">${inner}</g>`);
+        }
+        return {w,h,body};
+      }},
+      { key:'canopy', label:'Overlapping canopy', build(rng,p,c){
+        const w=100,h=100; let body=`<rect width="${w}" height="${h}" fill="${c[0]}"/>`;
+        const n = Math.round(p.count*1.6);
+        for(let i=0;i<n;i++){
+          const x=rnd(rng,0,w), y=rnd(rng,0,h);
+          const s=rnd(rng,p.size*0.9,p.size*1.8);
+          const rot=rnd(rng,0,360);
+          const col = pick(rng,[c[1],c[2],mix(c[1],c[2],0.5),shade(c[1],-0.15)]);
+          const inner = `<path d="${leafPath(s)}" fill="${col}" opacity="${fmt(rnd(rng,0.45,0.8))}"/>`;
+          body += wrapGroup(x,y,w,h,s/2,`<g transform="rotate(${fmt(rot)})">${inner}</g>`);
+        }
+        return {w,h,body};
+      }}
+    ]
+  },
+
+  grass: {
+    label:'Grass', group:'Foliage',
+    colors:['#375c2c','#5a8a3d','#8ab35a'],
+    colorNames:['ground','mid','tip'],
+    params:{ blades:{label:'Blade count', min:6, max:44, step:1, def:20},
+             height:{label:'Blade height', min:8, max:30, step:1, def:18},
+             sway:{label:'Sway', min:0, max:18, step:1, def:6} },
+    shapes:[
+      { key:'tufts', label:'Tufts', build(rng,p,c){
+        const w=80,h=p.height+10; let body=`<rect width="${w}" height="${h}" fill="${c[0]}"/>`;
+        for(let i=0;i<p.blades;i++){
+          const x=rnd(rng,0,w);
+          const bh=rnd(rng,p.height*0.5,p.height);
+          const sway=rnd(rng,-p.sway,p.sway);
+          const col = pick(rng,[c[1],c[2]]);
+          const tw = fmt(rnd(rng,0.8,2.2));
+          const d = `M ${fmt(x)} ${h} Q ${fmt(x+sway)} ${fmt(h-bh*0.6)} ${fmt(x+sway*1.4)} ${fmt(h-bh)}`;
+          body += `<path d="${d}" stroke="${col}" stroke-width="${tw}" fill="none" stroke-linecap="round" opacity="${fmt(rnd(rng,0.6,1))}"/>`;
+          if(x < 6) body += `<path d="${d}" stroke="${col}" stroke-width="${tw}" fill="none" stroke-linecap="round" opacity="${fmt(rnd(rng,0.6,1))}" transform="translate(${w} 0)"/>`;
+          if(x > w-6) body += `<path d="${d}" stroke="${col}" stroke-width="${tw}" fill="none" stroke-linecap="round" opacity="${fmt(rnd(rng,0.6,1))}" transform="translate(${-w} 0)"/>`;
+        }
+        return {w,h,body};
+      }}
+    ]
+  },
+
+  fabric_herringbone: {
+    label:'Herringbone Tweed', group:'Fabric',
+    colors:['#efe6d3','#8f7350','#c9a876'],
+    colorNames:['ground','weave A','weave B'],
+    params:{ scale:{label:'Stitch size', min:4, max:16, step:1, def:8},
+             thickness:{label:'Thread thickness', min:0.2, max:0.6, step:0.02, def:0.34},
+             mix:{label:'Colour mix %', min:0, max:100, step:5, def:50} },
+    shapes:[
+      { key:'weave', label:'Herringbone', build(rng,p,c){
+        const u = p.scale;
+        const w=u*4, h=u*4;
+        let body = `<rect width="${w}" height="${h}" fill="${c[0]}"/>`;
+        const stickW = u*0.95, stickH = u*p.thickness;
+        for(let row=-1; row<=4; row++){
+          const dir = row%2===0? 1 : -1;
+          const y = row*u;
+          for(let col=-1; col<=4; col++){
+            const x = col*u + (dir>0?0:u/2);
+            const useA = rng()*100 < p.mix;
+            const col1 = useA? c[1] : c[2];
+            body += `<g transform="translate(${fmt(x)} ${fmt(y)}) rotate(${dir*45})"><rect x="${fmt(-stickW/2)}" y="${fmt(-stickH/2)}" width="${fmt(stickW)}" height="${fmt(stickH)}" fill="${col1}" opacity="${fmt(rnd(rng,0.8,1))}"/></g>`;
+          }
+        }
+        return {w,h,body};
+      }}
+    ]
+  },
+
+  fabric_houndstooth: {
+    label:'Houndstooth', group:'Fabric',
+    colors:['#1d1c1a','#efe9dc'],
+    colorNames:['dark','light'],
+    params:{ scale:{label:'Check size', min:5, max:20, step:1, def:10},
+             tooth:{label:'Tooth size', min:0.2, max:0.8, step:0.05, def:0.5} },
+    shapes:[
+      { key:'classic', label:'Classic', build(rng,p,c){
+        const u = p.scale;
+        const w=u*4, h=u*4;
+        let body='';
+        for(let r=-1;r<=4;r++){
+          for(let col=-1;col<=4;col++){
+            const x=col*u, y=r*u;
+            const on = (col+r)%2===0;
+            const base = on? c[1] : c[0];
+            const tooth = on? c[0] : c[1];
+            body += `<rect x="${fmt(x)}" y="${fmt(y)}" width="${u}" height="${u}" fill="${base}"/>`;
+            body += `<path d="M${fmt(x+u)},${fmt(y)} L${fmt(x+u*(1+p.tooth))},${fmt(y+u*0.5)} L${fmt(x+u)},${fmt(y+u)} Z" fill="${tooth}"/>`;
+            body += `<path d="M${fmt(x)},${fmt(y+u)} L${fmt(x-u*p.tooth)},${fmt(y+u*0.5)} L${fmt(x)},${fmt(y)} Z" fill="${tooth}"/>`;
+          }
+        }
+        return {w,h,body};
+      }}
+    ]
+  },
+
+  fabric_tartan: {
+    label:'Tartan Plaid', group:'Fabric',
+    colors:['#2c2420','#7a2020','#1f4a33','#c9a83f'],
+    colorNames:['base','stripe A','stripe B','stripe C'],
+    params:{ unit:{label:'Stripe unit', min:3, max:16, step:1, def:7},
+             bands:{label:'Sett bands', min:3, max:10, step:1, def:6},
+             weave:{label:'Weave opacity', min:0.2, max:0.85, step:0.05, def:0.5} },
+    shapes:[
+      { key:'sett', label:'Woven sett', build(rng,p,c){
+        const palette=[c[1],c[2],c[3]];
+        let sett=[], total=0;
+        for(let i=0;i<p.bands;i++){
+          const wmul = rndInt(rng,1,4);
+          sett.push({col:pick(rng,palette), wmul});
+          total+=wmul;
+        }
+        const w = total*p.unit, h=w;
+        let body = `<rect width="${w}" height="${h}" fill="${c[0]}"/>`;
+        let x=0;
+        sett.forEach(band=>{
+          const bw=band.wmul*p.unit;
+          body += `<rect x="${fmt(x)}" width="${fmt(bw)}" height="${h}" fill="${band.col}" opacity="${fmt(p.weave)}"/>`;
+          x+=bw;
+        });
+        x=0;
+        sett.forEach(band=>{
+          const bw=band.wmul*p.unit;
+          body += `<rect y="${fmt(x)}" width="${w}" height="${fmt(bw)}" fill="${band.col}" opacity="${fmt(p.weave)}"/>`;
+          x+=bw;
+        });
+        x=0;
+        sett.forEach(band=>{
+          const bw=band.wmul*p.unit;
+          if(band.wmul>=2){
+            body += `<rect x="${fmt(x+bw/2-0.5)}" width="1" height="${h}" fill="${c[0]}" opacity="0.3"/>`;
+            body += `<rect y="${fmt(x+bw/2-0.5)}" width="${w}" height="1" fill="${c[0]}" opacity="0.3"/>`;
+          }
+          x+=bw;
+        });
+        return {w,h,body};
+      }}
+    ]
+  },
+
+  fabric_dots: {
+    label:'Polka & Print', group:'Fabric',
+    colors:['#1c2b3a','#e7dcc3'],
+    colorNames:['ground','motif'],
+    params:{ spacing:{label:'Spacing', min:10, max:34, step:1, def:18},
+             dotSize:{label:'Motif size', min:2, max:12, step:0.5, def:4.5},
+             sizeVar:{label:'Size variance', min:0, max:100, step:5, def:25},
+             rotation:{label:'Rotation range', min:0, max:180, step:5, def:20} },
+    shapes:[
+      { key:'grid', label:'Grid dots', build(rng,p,c){
+        const w=p.spacing*2, h=p.spacing*2;
+        let body = `<rect width="${w}" height="${h}" fill="${c[0]}"/>`;
+        const positions = [[0,0],[p.spacing,0],[0,p.spacing],[p.spacing,p.spacing]];
+        positions.forEach(([x,y],i)=>{
+          const r = p.dotSize*(1+ rnd(rng,-p.sizeVar/100,p.sizeVar/100));
+          const rot = rnd(rng,-p.rotation,p.rotation);
+          body += wrapGroup(x,y,w,h,r, `<g transform="rotate(${fmt(rot)})"><circle r="${fmt(r)}" fill="${c[1]}"/></g>`);
+        });
+        return {w,h,body};
+      }},
+      { key:'scatterMix', label:'Mixed scatter', build(rng,p,c){
+        const w=p.spacing*3, h=p.spacing*3;
+        let body = `<rect width="${w}" height="${h}" fill="${c[0]}"/>`;
+        const n = Math.max(6, Math.round((w*h)/(p.spacing*p.spacing))*2);
+        for(let i=0;i<n;i++){
+          const x=rnd(rng,0,w), y=rnd(rng,0,h);
+          const r = p.dotSize*(1+ rnd(rng,-p.sizeVar/100,p.sizeVar/100));
+          const rot = rnd(rng,-p.rotation,p.rotation);
+          const shapeType = pick(rng,['dot','dot','diamond','star']);
+          let inner;
+          if(shapeType==='dot') inner = `<circle r="${fmt(r)}" fill="${c[1]}"/>`;
+          else if(shapeType==='diamond') inner = `<path d="${diamondPath(r)}" fill="${c[1]}"/>`;
+          else inner = `<path d="${starPath(rng, r, 5,5)}" fill="${c[1]}"/>`;
+          body += wrapGroup(x,y,w,h,r, `<g transform="rotate(${fmt(rot)})">${inner}</g>`);
+        }
+        return {w,h,body};
+      }}
+    ]
+  },
+
+  fabric_weave: {
+    label:'Woven Linen', group:'Fabric',
+    colors:['#5c4a34','#8a7350','#3c2f20'],
+    colorNames:['warp','weft','shadow'],
+    params:{ thread:{label:'Thread width', min:3, max:14, step:0.5, def:6},
+             gap:{label:'Thread gap', min:0, max:6, step:0.5, def:1.5},
+             fray:{label:'Fray / irregularity', min:0, max:14, step:1, def:3} },
+    shapes:[
+      { key:'basket', label:'Basket weave', build(rng,p,c){
+        const t=p.thread, g=p.gap, u=t+g;
+        const w=u*2, h=u*2;
+        let body = `<rect width="${w}" height="${h}" fill="${c[2]}"/>`;
+        for(let row=0; row<2; row++){
+          const y = row*u;
+          const jitter = rnd(rng,-p.fray*0.3,p.fray*0.3);
+          body += `<rect x="${-u}" y="${fmt(y+jitter)}" width="${w+u*2}" height="${fmt(t)}" fill="${c[1]}" opacity="0.9"/>`;
+        }
+        for(let col=0; col<2; col++){
+          const x = col*u;
+          for(let row=0; row<2; row++){
+            const y=row*u;
+            const onTop = (col+row)%2===0;
+            if(onTop){
+              body += `<rect x="${fmt(x+rnd(rng,-p.fray*0.2,p.fray*0.2))}" y="${fmt(y-g)}" width="${fmt(t)}" height="${fmt(t+g*2)}" fill="${c[0]}"/>`;
+            }
+          }
+        }
+        return {w,h,body};
+      }}
+    ]
+  },
+
+  egypt_mud_brick: {
+    label:'Egyptian Mud Brick', group:'Moses', colors:['#a9683f','#70442d','#d29a68'], colorNames:['brick','mortar','sun'],
+    params:{ courses:{label:'Brick courses',min:2,max:8,step:1,def:4}, roughness:{label:'Surface roughness',min:4,max:50,step:1,def:22} },
+    shapes:[{key:'stretcher',label:'Stretcher bond',build(rng,p,c){const w=120,h=80,row=h/p.courses;let body=`<rect width="${w}" height="${h}" fill="${c[1]}"/>`;for(let y=0;y<p.courses;y++){const off=y%2?15:0;for(let x=-30;x<w+30;x+=30){const bx=x+off;body+=`<rect x="${bx+1}" y="${y*row+1}" width="28" height="${row-2}" rx="1.5" fill="${mix(c[0],c[2],rnd(rng,0,.22))}"/>`;}}for(let i=0;i<p.roughness;i++)body+=`<circle cx="${fmt(rnd(rng,0,w))}" cy="${fmt(rnd(rng,0,h))}" r="${fmt(rnd(rng,.4,1.5))}" fill="${c[1]}" opacity=".45"/>`;return{w,h,body};}}]
+  },
+  nile_reeds: {
+    label:'Nile Reeds', group:'Moses', colors:['#1d6573','#80a45a','#c6ad58'], colorNames:['water','reed','highlight'],
+    params:{ reeds:{label:'Reed count',min:5,max:30,step:1,def:16}, sway:{label:'Reed sway',min:1,max:12,step:1,def:5} },
+    shapes:[{key:'riverbank',label:'Riverbank',build(rng,p,c){const w=120,h=100;let body=`<rect width="${w}" height="${h}" fill="${c[0]}"/>`;for(let i=0;i<p.reeds;i++){const x=rnd(rng,0,w),top=rnd(rng,12,58),bend=rnd(rng,-p.sway,p.sway),col=rng()>.7?c[2]:c[1];body+=`<path d="M${fmt(x)} 105 Q${fmt(x+bend)} ${fmt((top+100)/2)} ${fmt(x+bend)} ${fmt(top)}" stroke="${col}" stroke-width="${fmt(rnd(rng,1,2.5))}" fill="none"/><ellipse cx="${fmt(x+bend)}" cy="${fmt(top-3)}" rx="2" ry="7" fill="${col}"/>`; }return{w,h,body};}}]
+  },
+  desert_sand: {
+    label:'Wilderness Sand', group:'Moses', colors:['#c8914e','#9b6738','#edc77e'], colorNames:['sand','shadow','sun'],
+    params:{ ridges:{label:'Wind ridges',min:3,max:18,step:1,def:8}, grit:{label:'Stone grit',min:0,max:60,step:2,def:20} },
+    shapes:[{key:'dunes',label:'Wind dunes',build(rng,p,c){const w=140,h=90;let body=`<rect width="${w}" height="${h}" fill="${c[0]}"/>`;for(let i=0;i<p.ridges;i++){const y=rnd(rng,0,h);body+=`<path d="M-10 ${fmt(y)} Q35 ${fmt(y-rnd(rng,3,12))} 75 ${fmt(y)} T150 ${fmt(y)}" stroke="${rng()>.25?c[2]:c[1]}" opacity=".45" fill="none"/>`;}for(let i=0;i<p.grit;i++)body+=`<circle cx="${fmt(rnd(rng,0,w))}" cy="${fmt(rnd(rng,0,h))}" r="${fmt(rnd(rng,.35,1.2))}" fill="${c[1]}" opacity=".55"/>`;return{w,h,body};}}]
+  },
+  bulrush_basket: {
+    label:'Bulrush Basket', group:'Moses', colors:['#bd8b45','#795329','#d7b66e'], colorNames:['reed','shadow','light'],
+    params:{ strand:{label:'Strand width',min:3,max:12,step:1,def:7}, gap:{label:'Weave gap',min:0,max:4,step:.5,def:1} },
+    shapes:[{key:'woven',label:'Woven reeds',build(rng,p,c){const u=p.strand+p.gap,w=u*4,h=u*4;let body=`<rect width="${w}" height="${h}" fill="${c[1]}"/>`;for(let y=0;y<4;y++)for(let x=0;x<4;x++){const col=(x+y)%2?c[0]:c[2];body+=`<rect x="${x*u}" y="${y*u}" width="${p.strand}" height="${p.strand}" rx="1" fill="${col}"/>`;body+=`<rect x="${x*u+p.strand}" y="${y*u}" width="${p.gap}" height="${u}" fill="${c[1]}"/>`;}return{w,h,body};}}]
+  },
+  hammered_gold: {
+    label:'Tabernacle Gold', group:'Moses', colors:['#c9952f','#805821','#f2cf67'], colorNames:['gold','shadow','glint'],
+    params:{ dents:{label:'Hammer marks',min:5,max:70,step:1,def:32}, glints:{label:'Bright glints',min:1,max:20,step:1,def:7} },
+    shapes:[{key:'hammered',label:'Hammered sheet',build(rng,p,c){const w=100,h=100;let body=`<rect width="${w}" height="${h}" fill="${c[0]}"/>`;for(let i=0;i<p.dents;i++){const x=rnd(rng,0,w),y=rnd(rng,0,h),r=rnd(rng,2,7);body+=`<circle cx="${fmt(x)}" cy="${fmt(y)}" r="${fmt(r)}" fill="none" stroke="${c[1]}" opacity=".25"/>`;}for(let i=0;i<p.glints;i++)body+=`<circle cx="${fmt(rnd(rng,0,w))}" cy="${fmt(rnd(rng,0,h))}" r="${fmt(rnd(rng,.5,2))}" fill="${c[2]}"/>`;return{w,h,body};}}]
+  },
+  stone_tablets: {
+    label:'Stone Tablets', group:'Moses', colors:['#77746b','#44443f','#b8b2a5'], colorNames:['stone','cut','edge'],
+    params:{ cracks:{label:'Fine cracks',min:1,max:20,step:1,def:7}, grain:{label:'Stone grain',min:3,max:45,step:1,def:18} },
+    shapes:[{key:'hewn',label:'Hewn stone',build(rng,p,c){const w=120,h=90;let body=`<rect width="${w}" height="${h}" fill="${c[0]}"/>`;for(let i=0;i<p.grain;i++)body+=`<circle cx="${fmt(rnd(rng,0,w))}" cy="${fmt(rnd(rng,0,h))}" r="${fmt(rnd(rng,.5,2.2))}" fill="${rng()>.5?c[1]:c[2]}" opacity=".3"/>`;for(let i=0;i<p.cracks;i++){const x=rnd(rng,0,w),y=rnd(rng,0,h);body+=`<path d="M${fmt(x)} ${fmt(y)} l${fmt(rnd(rng,-8,8))} ${fmt(rnd(rng,3,12))} l${fmt(rnd(rng,-5,5))} ${fmt(rnd(rng,2,8))}" stroke="${c[1]}" opacity=".55" fill="none"/>`;}return{w,h,body};}}]
+  }
+
+};
+const LIB = Object.fromEntries(STORY_TEXTURE_CONFIG.keys.filter(key => FULL_LIB[key]).map(key => {
+  const item = FULL_LIB[key];
+  return [key, {...item, group: STORY_TEXTURE_CONFIG.story}];
+}));
+
+/* ============================================================
+   State
+============================================================ */
+let state = {
+  texKey: 'stone',
+  shapeKey: FULL_LIB['stone'].shapes[0].key,
+  seed: 1,
+  colors: [],
+  params: {},
+  activeGroup: 'Template'
+};
+
+function currentTex(){ return LIB[state.texKey]; }
+function currentShape(){ return currentTex().shapes.find(s=>s.key===state.shapeKey) || currentTex().shapes[0]; }
+
+function initStateForTexture(key){
+  const t = LIB[key];
+  state.texKey = key;
+  state.shapeKey = t.shapes[0].key;
+  state.colors = t.colors.slice();
+  state.params = {};
+  Object.entries(t.params).forEach(([k,cfg])=>{ state.params[k] = cfg.def; });
+  state.activeGroup = t.group;
+}
+
+/* ============================================================
+   UI Build
+============================================================ */
+const groups = {};
+Object.entries(LIB).forEach(([key, t])=>{
+  groups[t.group] = groups[t.group] || [];
+  groups[t.group].push({key, ...t});
+});
+const groupNames = Object.keys(groups);
+
+function buildGroupRow(){
+  const row = document.getElementById('groupRow');
+  row.innerHTML = '';
+  groupNames.forEach(name=>{
+    const p = document.createElement('button');
+    p.className = 'pill' + (name===state.activeGroup? ' active':'');
+    p.textContent = name;
+    p.onclick = ()=>{ state.activeGroup = name; buildGroupRow(); buildRail(); };
+    row.appendChild(p);
+  });
+}
+
+function buildRail(){
+  const railEl = document.getElementById('rail');
+  railEl.innerHTML = '';
+  // Desktop: show every group with headers. Mobile: only active group (row hidden shows via CSS media query anyway,
+  // but we keep DOM identical and let CSS decide visibility via layout; simplest is to always render grouped list,
+  // and rely on groupRow for mobile filtering is unnecessary once all groups render — so filter for mobile only.
+  const isDesktop = window.matchMedia('(min-width: 860px)').matches;
+  const toRender = isDesktop ? groupNames : [state.activeGroup];
+  toRender.forEach(name=>{
+    if(isDesktop){
+      const cat = document.createElement('div');
+      cat.className='cat'; cat.textContent = name;
+      railEl.appendChild(cat);
+    }
+    groups[name].forEach(t=>{
+      const btn = document.createElement('button');
+      btn.className = 'tex-btn' + (t.key===state.texKey ? ' active':'');
+      btn.dataset.key = t.key;
+      btn.innerHTML = `<span class="swatch" style="background:${t.colors[0]}"></span>${t.label}`;
+      btn.onclick = ()=>{ initStateForTexture(t.key); buildGroupRow(); buildRail(); render(); };
+      railEl.appendChild(btn);
+    });
+  });
+}
+
+window.addEventListener('resize', ()=>{ buildRail(); });
+
+function buildShapeRow(){
+  const row = document.getElementById('shapeRow');
+  row.innerHTML = '';
+  currentTex().shapes.forEach(s=>{
+    const box = document.createElement('div');
+    box.className = 'shape-preview' + (s.key===state.shapeKey?' active':'');
+    box.title = s.label;
+    box.onclick = ()=>{ state.shapeKey = s.key; render(); };
+    row.appendChild(box);
+  });
+}
+
+function buildColorRow(){
+  const wrap = document.getElementById('colorRow');
+  wrap.innerHTML = '';
+  const names = currentTex().colorNames;
+  state.colors.forEach((col, i)=>{
+    const item = document.createElement('div');
+    item.className = 'colorItem';
+    const input = document.createElement('input');
+    input.type='color'; input.value = col.length===7? col : '#888888';
+    input.oninput = (e)=>{ state.colors[i] = e.target.value; render(); };
+    const span = document.createElement('span');
+    span.textContent = names[i] || ('c'+i);
+    item.appendChild(input); item.appendChild(span);
+    wrap.appendChild(item);
+  });
+}
+
+function buildParamGrp(){
+  const wrap = document.getElementById('paramGrp');
+  wrap.innerHTML = '<label>Parameters</label>';
+  const t = currentTex();
+  Object.entries(t.params).forEach(([k,cfg])=>{
+    const row = document.createElement('div');
+    row.className='row';
+    const top = document.createElement('div'); top.className='rowtop';
+    const lab = document.createElement('label'); lab.textContent = cfg.label;
+    const val = document.createElement('span'); val.className='valnum'; val.textContent = state.params[k];
+    top.appendChild(lab); top.appendChild(val);
+    const inp = document.createElement('input');
+    inp.type='range'; inp.min=cfg.min; inp.max=cfg.max; inp.step=cfg.step; inp.value=state.params[k];
+    inp.oninput = (e)=>{
+      state.params[k] = parseFloat(e.target.value);
+      val.textContent = state.params[k];
+      render();
+    };
+    row.appendChild(top); row.appendChild(inp);
+    wrap.appendChild(row);
+  });
+}
+
+/* ============================================================
+   Render
+============================================================ */
+let lastGenerated = null;
+
+function buildPatternMarkup(){
+  const rng = mulberry32(state.seed);
+  const shape = currentShape();
+  const c = state.colors.slice();
+  c.uid = state.texKey + '_' + state.seed;
+  const result = shape.build(rng, state.params, c);
+  return result;
+}
+
+function render(){
+  buildShapeRow();
+  buildColorRow();
+  buildParamGrp();
+
+  const gen = buildPatternMarkup();
+  lastGenerated = gen;
+  const patId = 'p_' + state.texKey + '_' + state.shapeKey;
+
+  const svg = document.getElementById('previewSvg');
+  svg.innerHTML = `
+    <defs>
+      ${gen.defs || ''}
+      <pattern id="${patId}" width="${gen.w}" height="${gen.h}" patternUnits="userSpaceOnUse">
+        ${gen.body}
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#${patId})"/>
+  `;
+  document.getElementById('tileHint').textContent = `tile ${gen.w}×${gen.h}px`;
+
+  updateCssPreview(gen, patId);
+}
+
+function standaloneSvgString(gen, patId, exportSize){
+  const size = exportSize || 256;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><defs>${gen.defs||''}<pattern id="${patId}" width="${gen.w}" height="${gen.h}" patternUnits="userSpaceOnUse">${gen.body}</pattern></defs><rect width="${size}" height="${size}" fill="url(#${patId})"/></svg>`;
+}
+
+function updateCssPreview(gen, patId){
+  const svgStr = standaloneSvgString(gen, patId, gen.w > gen.h ? gen.w : gen.h);
+  const encoded = encodeURIComponent(svgStr).replace(/'/g,'%27').replace(/"/g,'%22');
+  const className = `.tex-${state.texKey.replace(/_/g,'-')}`;
+  const css = `${className} {\n  background-image: url("data:image/svg+xml,${encoded}");\n  background-repeat: repeat;\n  background-size: ${gen.w}px ${gen.h}px;\n}`;
+  document.getElementById('cssPreview').textContent = css;
+  const bytes = new Blob([svgStr]).size;
+  document.getElementById('fileSize').textContent = `~${bytes} bytes / tile`;
+}
+
+/* ============================================================
+   Actions
+============================================================ */
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 1400);
+}
+
+document.getElementById('seedRange').oninput = (e)=>{
+  state.seed = parseInt(e.target.value);
+  document.getElementById('seedVal').textContent = state.seed;
+  render();
+};
+document.getElementById('randomizeBtn').onclick = ()=>{
+  state.seed = rndInt(mulberry32(Date.now()%100000), 1, 9999);
+  document.getElementById('seedRange').value = state.seed;
+  document.getElementById('seedVal').textContent = state.seed;
+  render();
+};
+
+document.getElementById('downloadSvgBtn').onclick = ()=>{
+  const gen = lastGenerated;
+  const patId = 'p_' + state.texKey + '_' + state.shapeKey;
+  const str = standaloneSvgString(gen, patId, gen.w);
+  const blob = new Blob([str], {type:'image/svg+xml'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `${state.texKey}-${state.shapeKey}-${state.seed}.svg`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Downloaded .svg');
+};
+
+document.getElementById('copyPatternBtn').onclick = ()=>{
+  const gen = lastGenerated;
+  const patId = 'p_' + state.texKey + '_' + state.shapeKey;
+  const markup = `${gen.defs||''}\n<pattern id="${patId}" width="${gen.w}" height="${gen.h}" patternUnits="userSpaceOnUse">\n  ${gen.body}\n</pattern>`;
+  navigator.clipboard.writeText(markup);
+  showToast('Pattern markup copied');
+};
+
+document.getElementById('copyCssBtn').onclick = ()=>{
+  navigator.clipboard.writeText(document.getElementById('cssPreview').textContent);
+  showToast('CSS class copied');
+};
+
+document.getElementById('codeToggleBtn').onclick = (e)=>{
+  const box = document.getElementById('cssPreview');
+  const open = box.classList.toggle('open');
+  e.target.textContent = open ? 'Hide CSS code ▴' : 'Show CSS code ▾';
+};
+
+/* ============================================================
+   Init
+============================================================ */
+initStateForTexture('water_still');
+buildGroupRow();
+buildRail();
+render();
+</script>
+</body>
+</html>

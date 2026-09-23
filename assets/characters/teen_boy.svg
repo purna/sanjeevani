@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" width="100%" height="100%">
+      <defs>
+        <pattern id="tex-plain" patternUnits="userSpaceOnUse" width="8" height="8"><rect width="8" height="8" fill="transparent"/></pattern>
+        <pattern id="tex-woven_linen" patternUnits="userSpaceOnUse" width="8" height="8"><path d="M0 0H8M0 2H8M0 4H8M0 6H8M0 0V8M2 0V8M4 0V8M6 0V8" stroke="#000" stroke-width=".45" opacity=".13"/></pattern>
+        <pattern id="tex-fine_linen" patternUnits="userSpaceOnUse" width="5" height="5"><path d="M0 1H5M1 0V5" stroke="#fff" stroke-width=".35" opacity=".14"/><path d="M0 4H5M4 0V5" stroke="#000" stroke-width=".3" opacity=".08"/></pattern>
+        <pattern id="tex-herringbone" patternUnits="userSpaceOnUse" width="12" height="8"><path d="M0 0L6 4L12 0M0 8L6 4L12 8" fill="none" stroke="#000" stroke-width="1" opacity=".16"/></pattern>
+        <pattern id="tex-basket_weave" patternUnits="userSpaceOnUse" width="12" height="12"><path d="M0 2H12M0 8H12M2 0V12M8 0V12" stroke="#000" stroke-width="2" opacity=".13"/></pattern>
+        <pattern id="tex-dotted" patternUnits="userSpaceOnUse" width="10" height="10"><circle cx="2.5" cy="2.5" r="1.2" fill="#fff" opacity=".2"/><circle cx="7.5" cy="7.5" r="1.2" fill="#000" opacity=".12"/></pattern>
+        <pattern id="tex-tartan" patternUnits="userSpaceOnUse" width="14" height="14"><path d="M0 3H14M0 10H14M3 0V14M10 0V14" stroke="#000" stroke-width="2" opacity=".14"/><path d="M0 6H14M6 0V14" stroke="#fff" stroke-width="1" opacity=".12"/></pattern>
+        <pattern id="tex-scales" patternUnits="userSpaceOnUse" width="12" height="8"><path d="M0 0Q3 6 6 0Q9 6 12 0M-6 8Q-3 2 0 8Q3 2 6 8Q9 2 12 8" fill="none" stroke="#000" stroke-width="1" opacity=".2"/></pattern>
+        <!-- Selected material is embedded directly for reliable browser/export rendering. -->
+        <pattern id="cloth-texture" patternUnits="userSpaceOnUse" width="8" height="8">
+          <path d="M0 0H8M0 4H8M0 0V8M4 0V8" stroke="#fff" stroke-width=".65" opacity=".38"/><path d="M0 2H8M0 6H8M2 0V8M6 0V8" stroke="#1a100a" stroke-width=".65" opacity=".38"/>
+        </pattern>
+        <!-- A hammered or burnished metal texture. -->
+        <pattern id="metal-texture" patternUnits="userSpaceOnUse" width="20" height="20">
+           <rect width="20" height="20" fill="transparent" />
+           <circle cx="5" cy="5" r="1.5" fill="#fff" opacity="0.08" />
+           <circle cx="15" cy="15" r="2" fill="#fff" opacity="0.05" />
+           <circle cx="10" cy="8" r="1" fill="#000" opacity="0.05" />
+           <circle cx="3" cy="18" r="1.2" fill="#000" opacity="0.06" />
+        </pattern>
+      </defs>
+    
+        <!-- Neck -->
+        <path d="M82,145 L82,185 C90,195 110,195 118,185 L118,145 Z" fill="#b87954"/>
+        <path d="M82,145 L82,165 C90,175 110,175 118,165 L118,145 Z" fill="#9a5b36" opacity="0.5"/>
+        <!-- Shoulders / Base Torso -->
+        <path d="M30,240 C35,190 60,170 82,170 L118,170 C140,170 165,190 170,240 Z" fill="#b87954"/>
+    <path d="M28,240Q34,184 60,169L84,170L100,195L116,170L140,169Q166,184 172,240Z" fill="#4c7180"/><path d="M75,168L100,198L125,168L119,240H81Z" fill="#d7c39a"/><path d="M96,177H104V222H96Z" fill="#a44b4b" opacity=".8"/><circle cx="100" cy="184" r="2" fill="#a44b4b"/><circle cx="100" cy="194" r="2" fill="#a44b4b"/><path d="M28,240Q34,184 60,169L84,170L100,195L116,170L140,169Q166,184 172,240Z" fill="url(#cloth-texture)"/><g transform="translate(100,100) scale(0.95) translate(-100,-100)"><g transform="translate(48,95) scale(1) translate(-48,-95)"><path d="M48,95 C42,95 34,95 34,105 C34,115 42,122 48,118 C54,122 62,115 62,105 C62,95 54,95 48,95 Z" fill="#b87954"/></g><g transform="translate(152,95) scale(1) translate(-152,-95)"><path d="M152,95 C158,95 166,95 166,105 C166,115 158,122 152,118 C146,122 138,115 138,105 C138,95 146,95 152,95 Z" fill="#b87954"/></g></g><g transform="translate(100,100) scale(0.95) translate(-100,-100)"></g><g transform="translate(100,100) scale(0.95) translate(-100,-100)"><path d="M100,25 C140,25 160,56 160,98 C160,126 156,150 144,166 C132,182 116,190 100,190 C84,190 68,182 56,166 C44,150 40,126 40,98 C40,56 60,25 100,25 Z" fill="#b87954"/></g><g transform="translate(100,100) scale(0.95) translate(-100,-100)">
+                <path d="M86,163 L114,163 C114,174 108,183 100,185 C92,183 86,174 86,163 Z" fill="#b87954"/>
+                <path d="M90,178 C94,181 106,181 110,178 C106,180.5 94,180.5 90,178 Z" fill="#9c5d38" opacity="0.2"/>
+            </g><g transform="translate(100,100) scale(0.95) translate(-100,-100)"></g><path d="M82,142 C90,146 110,146 118,142 C110,150 90,150 82,142 Z" fill="#9a5a50"/><g transform="translate(100,110) scale(1) translate(-100,-110)"><path d="M97,94 C95,104 91,114 89,119 C88,123 91,126 96,127 L104,127 C109,126 112,123 111,119 C109,114 105,104 103,94 Z" fill="#9c5d38" opacity="0.32"/>
+        <ellipse cx="94.5" cy="122" rx="2" ry="1.4" fill="#9c5d38" opacity="0.85"/>
+        <ellipse cx="105.5" cy="122" rx="2" ry="1.4" fill="#9c5d38" opacity="0.85"/>
+    </g><path d="M64,78 C70,68 84,67 90,76 C84,71 70,72 64,78 Z" fill="#231914"/><g transform="translate(200,0) scale(-1,1)"><path d="M64,78 C70,68 84,67 90,76 C84,71 70,72 64,78 Z" fill="#231914"/></g><path d="M64,92 C69,85 85,85 90,92 C85,99 69,99 64,92 Z" fill="#fdfaf1"/><circle cx="77" cy="93" r="5" fill="#3b2b24"/><circle cx="77" cy="93" r="2" fill="#1a1410"/><circle cx="78.4" cy="91.6" r="1.1" fill="#ffffff"/><g transform="translate(200,0) scale(-1,1)"><path d="M64,92 C69,85 85,85 90,92 C85,99 69,99 64,92 Z" fill="#fdfaf1"/><circle cx="77" cy="93" r="5" fill="#3b2b24"/><circle cx="77" cy="93" r="2" fill="#1a1410"/><circle cx="78.4" cy="91.6" r="1.1" fill="#ffffff"/></g><g transform="translate(100,100) scale(0.95) translate(-100,-100)"><path d="M100,22 C138,22 156,48 154,85 C154,70 148,58 140,52 C142,60 140,66 136,68 C132,50 112,38 100,38 C88,38 68,50 64,68 C60,66 58,60 60,52 C52,58 46,70 46,85 C44,48 62,22 100,22 Z" fill="#231914"/></g><g transform="translate(100,100) scale(0.95) translate(-100,-100)"></g></svg>

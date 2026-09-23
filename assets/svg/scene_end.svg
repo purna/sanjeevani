@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <defs>
+    <linearGradient id="g08sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFD162"/>
+      <stop offset="35%" stop-color="#FFB347"/>
+      <stop offset="100%" stop-color="#8BC3A9"/>
+    </linearGradient>
+    <radialGradient id="g08sunset" cx="30%" cy="55%" r="55%">
+      <stop offset="0%" stop-color="#FFE598" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#FFE598" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="g08field" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#D8E5A3"/>
+      <stop offset="100%" stop-color="#A3C96B"/>
+    </linearGradient>
+    <linearGradient id="g08soil" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E5C987"/>
+      <stop offset="100%" stop-color="#B4954A"/>
+    </linearGradient>
+    <linearGradient id="g08wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F7E8D0"/>
+      <stop offset="100%" stop-color="#E0D0B3"/>
+    </linearGradient>
+    <linearGradient id="g08roof" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#C76134"/>
+      <stop offset="100%" stop-color="#9A421A"/>
+    </linearGradient>
+    <linearGradient id="g08hp" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8DCC9"/>
+      <stop offset="100%" stop-color="#D0C4A5"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="0" y="0" width="1920" height="1080" fill="url(#g08sky)"/>
+
+  <g id="sunset-glow">
+    <ellipse cx="400" cy="640" rx="340" ry="120" fill="url(#g08sunset)"/>
+    <circle cx="260" cy="730" r="80" fill="#FFE598" opacity="0.35"/>
+  </g>
+
+  <g id="hills">
+    <ellipse cx="1480" cy="740" rx="260" ry="38" fill="#5DAB57"/>
+    <path d="M0,780 Q220,740 480,760 Q820,730 1180,755 Q1620,720 1920,750 L1920,840 L0,840 C60,810 120,810 200,800 Z" fill="#4A8F4C"/>
+  </g>
+
+  <path d="M0,450 Q300,430 760,445 Q1200,425 1920,450 L1920,540 Q1200,520 760,535 Q300,520 0,535 Z" fill="url(#g08field)" opacity="0.95"/>
+  <path d="M0,540 Q300,520 760,535 Q1200,515 1920,540 L1920,620 Q1200,600 760,614 Q300,595 0,610 Z" fill="url(#g08field)"/>
+
+  <g id="road">
+    <path d="M0,580 C320,570 640,585 960,580 C1280,575 1600,585 1920,578 L1920,660 C1600,658 1280,660 960,655 C640,650 320,660 0,658 Z" fill="url(#g08soil)"/>
+    <path d="M0,578 C320,568 640,583 960,578 C1280,573 1600,583 1920,576 L1920,620 C1600,618 1280,620 960,615 C640,610 320,620 0,618 Z" fill="#FFFFFF" opacity="0.32"/>
+  </g>
+
+  <g id="houses">
+    <g transform="translate(340,410)">
+      <rect x="-40" y="0" width="80" height="60" fill="url(#g08wall)"/>
+      <rect x="-40" y="0" width="80" height="16" fill="url(#g08roof)"/>
+      <rect x="-35" y="12" width="70" height="32" fill="#3A6B9E" opacity="0.5"/>
+    </g>
+    <g transform="translate(640,400)">
+      <rect x="-45" y="0" width="90" height="66" fill="#ECD9B8"/>
+      <polygon points="-45,0 0,-28 45,0" fill="url(#g08roof)"/>
+      <rect x="-40" y="14" width="80" height="38" fill="#3A6B9E" opacity="0.45"/>
+    </g>
+    <g transform="translate(980,420)">
+      <rect x="-38" y="0" width="76" height="54" fill="url(#g08wall)"/>
+      <rect x="-38" y="0" width="76" height="15" fill="url(#g08roof)"/>
+      <rect x="-33" y="12" width="66" height="27" fill="#3A6B9E" opacity="0.55"/>
+    </g>
+    <g transform="translate(1420,430)">
+      <rect x="-30" y="0" width="60" height="50" fill="#FED8B0"/>
+      <polygon points="-30,0 0,-22 30,0" fill="url(#g08roof)"/>
+    </g>
+  </g>
+
+  <g id="health-post" transform="translate(1720,390)">
+    <rect x="-44" y="0" width="88" height="64" fill="url(#g08hp)"/>
+    <rect x="-44" y="0" width="88" height="14" fill="url(#g08roof)"/>
+    <rect x="-44" y="18" width="88" height="22" fill="#3A6B9E" opacity="0.55"/>
+    <rect x="-50" y="28" width="10" height="4" fill="#D83A3A"/>
+  </g>
+
+  <g id="banana-row">
+    <g transform="translate(180,440)">
+      <path d="M6,0 C7,-46 13,-46 14,0 C13,14 7,14 6,2 Z" fill="#1B5E20"/>
+      <ellipse cx="11" cy="-24" rx="12" ry="5" fill="#1B5E20"/>
+    </g>
+    <g transform="translate(1180,460)">
+      <path d="M6,0 C7,-44 13,-44 14,0 C13,14 7,14 6,2 Z" fill="#1B5E20"/>
+      <ellipse cx="11" cy="-22" rx="13" ry="5" fill="#1B5E20"/>
+    </g>
+  </g>
+
+  <g id="mango-tree">
+    <circle cx="1620" cy="280" r="34" fill="#3A8C42" opacity="0.85"/>
+    <circle cx="1610" cy="270" r="34" fill="#3A8C42" opacity="0.75"/>
+    <path d="M1620,310 C1660,330 1680,370 1660,410 C1600,400 1565,378 1585,340 C1580,332 1590,320 1620,310 Z" fill="#2E7D32"/>
+    <rect x="1614" y="340" width="12" height="80" fill="#6B4226"/>
+  </g>
+
+  <g id="ground-shadow">
+    <rect x="0" y="580" width="1920" height="500" fill="#3B2A1A" opacity="0.18"/>
+  </g>
+</svg>
