@@ -16,10 +16,10 @@ The flipchart is intended for frontline health workers and community facilitator
 
 ## Source files
 
-| File | Role | Original location |
-| --- | --- | --- |
-| `TB_Flipchart_Video_Script.pptx` | Draft script, storyboard and visual references | `/Users/nigelmorris/Documents/Nepal/` |
-| `Final_ToR_TB_Flipchart_Animated_Video_Sanjeevani.pdf` | Commissioning brief and delivery requirements | `/Users/nigelmorris/Documents/Nepal/flipbook/` |
+| File | Role | 
+| --- | --- | 
+| `TB_Flipchart_Video_Script.pptx` | Draft script, storyboard and visual references | 
+| `Final_ToR_TB_Flipchart_Animated_Video_Sanjeevani.pdf` | Commissioning brief and delivery requirements | 
 
 Open the presentation in PowerPoint or a compatible presentation viewer. Use the slide numbers below to locate content. Embedded artwork contains additional visual text, so review the images as well as the editable script text.
 
