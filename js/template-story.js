@@ -64,6 +64,15 @@ async function loadSvg(path) {
   return svgCache[path];
 }
 
+/* ── Background image: low-res first, then high-res ──────────── */
+function loadBackgroundImage(img, hiResPath) {
+  const lowResPath = hiResPath.replace('assets/backgrounds/', 'assets/backgrounds/lowres/');
+  const hi = new Image();
+  hi.onload = () => { if (img.src !== hiResPath) img.src = hiResPath; };
+  hi.src = hiResPath;
+  img.src = lowResPath;
+}
+
 /* ── Parallax (Adam-style) ───────────────────── */
 function initParallax(svgEl, container) {
   const layers = Array.from(svgEl.querySelectorAll('[data-depth]'));
@@ -172,6 +181,16 @@ function buildLineHTML(text, fx) {
   }).join('');
 }
 
+/* ── SFX bounce variations ─────────────────────── */
+function sfxVariation(text) {
+  const t = (text || '').toLowerCase();
+  // "Great big" messages — large & prominent, subtle gentle animation
+  if (/bird|chirp|dawn|morning|chorus|sunrise|child|play|signature|warm/.test(t)) return 'fx-bounce-big';
+  // Gentle/quiet sfx — small & understated
+  if (/soft|gentle|whisper|quiet|murmur|rustle|breath|lull|distant|cough/.test(t)) return 'fx-bounce-soft';
+  return 'fx-bounce';
+}
+
 /* ── Choices ────────────────────────────────── */
 function renderChoices(data) {
   choicesBox.innerHTML = '';
@@ -252,25 +271,25 @@ async function renderLine() {
 
   const sceneKey = data.scene || act.scene || act.id;
 
-  // Layer 1: SVG background (parallax)
+  // Layer 1: Background — low-res image (progressive) when present, else SVG scene
   const svgLayer = document.createElement('div');
   svgLayer.id = 'svgLayer';
   svgLayer.classList.add('svg-behind');
-  svgLayer.innerHTML = await loadSvg(`assets/svg/scene_${sceneKey}.svg`);
   graphicContainer.appendChild(svgLayer);
-  const svgEl = svgLayer.querySelector('svg[data-parallax]');
-  if (svgEl) {
-    svgLayer.setAttribute('data-parallax', '');
-    initParallax(svgEl, svgLayer);
-  }
 
-  // Page image (jpg) shown over the SVG scene when present
   if (data.image) {
     const img = document.createElement('img');
-    img.src = data.image;
     img.alt = (data.text || '').replace(/</g, '&lt;');
     img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;pointer-events:none;';
     svgLayer.appendChild(img);
+    loadBackgroundImage(img, data.image);
+  } else {
+    svgLayer.innerHTML = await loadSvg(`assets/svg/scene_${sceneKey}.svg`);
+    const svgEl = svgLayer.querySelector('svg[data-parallax]');
+    if (svgEl) {
+      svgLayer.setAttribute('data-parallax', '');
+      initParallax(svgEl, svgLayer);
+    }
   }
   // Layer 2: 3D midground (Three.js)
   if (use3D && renderer && threeCanvas && window.SCENE_FACTORIES && window.SCENE_FACTORIES[sceneKey]) {
@@ -312,7 +331,7 @@ async function renderLine() {
     }
     if (data.sfx) {
       const sfxDiv = document.createElement('div');
-      sfxDiv.className = 'sfx fx-bounce';
+      sfxDiv.className = 'sfx ' + sfxVariation(data.sfx);
       sfxDiv.innerHTML = buildLineHTML(data.sfx, 'sfx');
       overlay.appendChild(sfxDiv);
     }

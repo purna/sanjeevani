@@ -11,7 +11,7 @@
   const folder = (/\.html?$/i.test(parts.at(-1) || '') ? parts.at(-2) : parts.at(-1)) || 'Story';
   const theme = themes[folder] || {
     title: 'SANJEEVANI',
-    icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path fill="#dc143c" d="M32 6c1.5 10.5 5.5 14.5 16 16-10.5 1.5-14.5 5.5-16 16-1.5-10.5-5.5-14.5-16-16 10.5-1.5 14.5-5.5 16-16Z"/><path fill="#fff3cf" d="M28 24c1 5-4 6-4 11a6 6 0 0 0 12 0c0-3-2-4-3-7-1 1-1 2-1 3-1-2-2-4-4-7Z"/><path fill="#1e90ff" d="M32 6c1.5 10.5 5.5 14.5 16 16-10.5 1.5-14.5 5.5-16 16-1.5-10.5-5.5-14.5-16-16 10.5-1.5 14.5-5.5 16-16Z"/></svg>',
+    icon: '<img src="assets/gfx/golden-star-rosette.svg" alt="Golden star rosette" style="width:100%;height:100%;display:block">',
     color: '#c87a30'
   };
 

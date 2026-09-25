@@ -95,7 +95,7 @@
     {
       "id": "intro_6",
       "speaker": "narrator",
-      "text": "Together they walk the village path — and a sign-language interpreter stands ready.",
+      "text": "Together they walk the village path.",
       "fx": "fade",
       "delay": 1000,
       "align": "center",
@@ -104,7 +104,7 @@
       "scene": "morning",
       "foreground": "fg_interpreter",
       "time": "0:30–0:35",
-      "image": "assets/backgrounds/act1_page8_bg_alt.jpg"
+      "image": "assets/backgrounds/act1_page8.jpg"
     }
   ],
   "svg": "morning",

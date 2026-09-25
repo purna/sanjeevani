@@ -46,6 +46,11 @@ html, body {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   text-align: center; padding: 30px; transition: opacity .5s;
 }
+#startScreen .start-flag {
+  position: absolute; top: 24px; right: 24px;
+  width: clamp(60px, 15vw, 100px); height: auto;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+}
 #startScreen .comic-cover {
   width: min(90vw, 460px);
   background: #1a0e08;
@@ -74,7 +79,8 @@ html, body {
   color: var(--cream); margin: 4px 0 16px; font-weight: 800;
   text-shadow: 2px 2px 0px var(--ink);
 }
-.bigtorch { font-size: 64px; margin-bottom: 10px; animation: popInAnim .8s .2s both; filter: drop-shadow(0 0 10px rgba(255,180,80,0.5)); }
+.bigtorch { width: clamp(30px, 35vw, 60px); margin: auto; margin: 10px auto; animation: popInAnim .8s .2s both; filter: drop-shadow(0 0 10px rgba(255,180,80,0.5)); }
+.bigtorch img { display: block; width: 100%; height: auto; }
 #startScreen p {
   font-family: 'Press Start 2P', monospace; font-size: 10px;
   max-width: 460px; color: var(--cream); opacity: .9;
@@ -456,14 +462,23 @@ html, body {
 /* ── Text Animation Effects ──────────────────── */
 .fx-fade .word   { opacity:0; transform:translateY(10px); animation: chFade .4s ease both; }
 @keyframes chFade { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-.fx-type .word   { display:inline-block; opacity:0; transform:translateY(4px); animation: chType .2s ease both; }
+.fx-type .word   { font-family: 'Space Mono', monospace; display:inline-block; opacity:0; transform:translateY(4px); animation: chType .2s ease both; }
 @keyframes chType { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
-.fx-wave .word   { opacity:0; animation: chWaveIn .3s ease both, chWaveBob 1.5s ease-in-out infinite; }
+.fx-wave .word   { font-family: 'Bangers', cursive; opacity:0; animation: chWaveIn .3s ease both, chWaveBob 1.5s ease-in-out infinite; }
 @keyframes chWaveIn { from { opacity:0; } to { opacity:1; } }
 @keyframes chWaveBob { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-6px); } }
-.fx-bounce .word { display:inline-block; opacity:0; transform:scale(.3) translateY(20px); animation: wordBounce .5s cubic-bezier(.34,1.56,.64,1) both; }
+.fx-bounce .word { font-family: 'Bangers', cursive; display:inline-block; opacity:0; transform:scale(.3) translateY(20px); animation: wordBounce .5s cubic-bezier(.34,1.56,.64,1) both; }
 @keyframes wordBounce { from { opacity:0; transform:scale(.3) translateY(20px); } to { opacity:1; transform:scale(1) translateY(0); } }
-.fx-shake .line-inner { display:inline-block; animation: shakeIt .4s ease-in-out infinite; }
+
+/* ── SFX bounce variations ─────────────────────── */
+.sfx.fx-bounce-big { font-size: clamp(72px, 15vw, 130px); }
+.fx-bounce-big .word { display:inline-block; opacity:0; transform:translateY(16px) scale(.92); animation: wordBounceBig .8s cubic-bezier(.25,.1,.16,1) both; }
+@keyframes wordBounceBig { to { opacity:1; transform:translateY(0) scale(1); } }
+.sfx.fx-bounce-soft { font-size: clamp(46px, 8vw, 76px); }
+.fx-bounce-soft .word { display:inline-block; opacity:0; transform:translateY(8px) scale(.96); animation: wordBounceSoft .45s ease-out both; }
+@keyframes wordBounceSoft { to { opacity:1; transform:translateY(0) scale(1); } }
+
+.fx-shake .line-inner { font-family: 'Press Start 2P', monospace; display:inline-block; animation: shakeIt .4s ease-in-out infinite; }
 @keyframes shakeIt { 0%,100% { transform:translate(0,0); } 20% { transform:translate(-3px,2px); } 40% { transform:translate(3px,-2px); } 60% { transform:translate(-2px,1px); } 80% { transform:translate(2px,-1px); } }
 
 /* ── Nepali Language Font Size ───────────────── */
